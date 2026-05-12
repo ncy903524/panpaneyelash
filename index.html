@@ -470,129 +470,94 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <!-- ▶ PAGE 2：提醒 -->
     <div class="page" id="page-remind">
 
-      <div class="sec-head"><span class="sec-title">即時提醒</span></div>
-      <div class="px12">
-        <div class="remind-item">
-          <div class="remind-header">
-            <span class="remind-title">🔔 預約成功通知</span>
-            <span class="remind-badge" style="background:var(--accent-pale);color:var(--accent)">自動</span>
-          </div>
-          <div class="remind-desc">預約完成後立即發送 LINE 確認訊息（日期・時間・服務項目）</div>
-        </div>
-        <div class="remind-item">
-          <div class="remind-header">
-            <span class="remind-title">⏰ 前兩天提醒</span>
-            <span class="remind-badge" style="background:var(--amber-pale);color:var(--amber)">排程</span>
-          </div>
-          <div class="remind-desc">預約前 2 天自動發送提醒，降低 No-show 率</div>
-        </div>
-      </div>
+      <!-- ① 本日 / 本週提醒總覽 -->
+      <div class="sec-head"><span class="sec-title">📅 本日提醒</span><span class="sec-action" id="remind-today-date"></span></div>
+      <div id="remind-today-list" class="px12"></div>
 
-      <div class="sec-head"><span class="sec-title">🎂 生日祝福</span></div>
-      <div class="px12">
-        <div class="remind-item">
-          <div class="remind-header">
-            <span class="remind-title">生日當月祝福</span>
-            <span class="remind-badge" style="background:var(--pink-pale);color:var(--pink)">自動</span>
-          </div>
-          <div class="remind-desc">客戶生日當月自動發送祝賀 + 優惠券（可設定券別）</div>
-        </div>
-      </div>
+      <div class="sec-head" style="margin-top:4px"><span class="sec-title">📆 本週提醒</span></div>
+      <div id="remind-week-list" class="px12"></div>
 
-      <div class="sec-head"><span class="sec-title">📆 回訪提醒設定</span></div>
+      <!-- ② 未完成提醒 -->
+      <div class="sec-head" style="margin-top:4px">
+        <span class="sec-title" style="color:var(--red)">⚠️ 未完成提醒</span>
+        <span class="sec-action" id="remind-pending-count"></span>
+      </div>
+      <div id="remind-pending-list" class="px12"></div>
+
+      <!-- ③ 本月提醒 -->
+      <div class="sec-head" style="margin-top:4px"><span class="sec-title">🗓 本月提醒</span></div>
+      <div id="remind-month-list" class="px12"></div>
+
+      <!-- ── 回訪提醒設定 ── -->
+      <div class="sec-head" style="margin-top:8px"><span class="sec-title">⚙️ 回訪提醒天數設定</span></div>
       <div class="px12">
+        <div style="background:var(--amber-pale);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--amber)">
+          ✏️ 調整天數後按「儲存設定」，提醒名單將自動重新計算
+        </div>
 
         <!-- 睫毛 -->
         <div class="card" style="margin:0 0 10px">
           <div class="card-header" style="background:var(--accent-pale)">
-            <span style="font-size:18px">😴</span>
+            <span style="font-size:16px">😴</span>
             <span class="card-title text-accent">睫毛</span>
           </div>
           <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">第一次關心</label>
-              <select class="form-input">
-                <option>施作後 5 天</option><option>施作後 3 天</option><option>施作後 7 天</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">三週回補提醒</label>
-              <select class="form-input">
-                <option>施作後 17 天</option><option>施作後 14 天</option><option>施作後 21 天</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label class="form-label">長期回訪詢問</label>
-              <select class="form-input">
-                <option>施作後 3 個月</option><option>施作後 2 個月</option><option>施作後 4 個月</option>
-              </select>
-            </div>
+            <div class="form-group"><label class="form-label">第一次關心（天）</label>
+              <input class="form-input" type="number" id="cfg-lash-1" value="5" min="1"></div>
+            <div class="form-group"><label class="form-label">三週回補提醒（天）</label>
+              <input class="form-input" type="number" id="cfg-lash-2" value="17" min="1"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">長期回訪詢問（月）</label>
+              <input class="form-input" type="number" id="cfg-lash-3" value="3" min="1"></div>
           </div>
         </div>
 
         <!-- 眉毛 -->
         <div class="card" style="margin:0 0 10px">
-          <div class="card-header" style="background:#f0eaf7">
-            <span style="font-size:18px">✏️</span>
+          <div class="card-header" style="background:var(--purple-pale)">
+            <span style="font-size:16px">✏️</span>
             <span class="card-title" style="color:var(--purple)">眉毛</span>
           </div>
           <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">第一次關心</label>
-              <select class="form-input"><option>施作後 2 週</option><option>施作後 10 天</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">照片回傳提醒</label>
-              <select class="form-input"><option>施作後 1 個月</option><option>施作後 3 週</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">回補提醒</label>
-              <select class="form-input"><option>施作後 3 個月</option><option>施作後 2 個月</option></select>
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label class="form-label">長期回補詢問</label>
-              <select class="form-input"><option>施作後 10 個月</option><option>施作後 8 個月</option></select>
-            </div>
+            <div class="form-group"><label class="form-label">第一次關心（天）</label>
+              <input class="form-input" type="number" id="cfg-brow-1" value="14" min="1"></div>
+            <div class="form-group"><label class="form-label">照片回傳（天）</label>
+              <input class="form-input" type="number" id="cfg-brow-2" value="30" min="1"></div>
+            <div class="form-group"><label class="form-label">回補提醒（月）</label>
+              <input class="form-input" type="number" id="cfg-brow-3" value="3" min="1"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">長期回補詢問（月）</label>
+              <input class="form-input" type="number" id="cfg-brow-4" value="10" min="1"></div>
           </div>
         </div>
 
         <!-- 霧唇 / 髮際線 -->
         <div class="card" style="margin:0 0 10px">
           <div class="card-header" style="background:var(--pink-pale)">
-            <span style="font-size:18px">💋</span>
+            <span style="font-size:16px">💋</span>
             <span class="card-title" style="color:var(--pink)">霧唇 ／ 髮際線</span>
           </div>
           <div class="card-body">
-            <div class="form-group">
-              <label class="form-label">照片回傳（多次）</label>
-              <select class="form-input"><option>施作後 2 天</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">照片回傳（第二次）</label>
-              <select class="form-input"><option>施作後 4 天</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">照片回傳（第三次）</label>
-              <select class="form-input"><option>施作後 8 天</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">照片回傳（第四次）</label>
-              <select class="form-input"><option>施作後 10 天</option></select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">回補提醒</label>
-              <select class="form-input"><option>施作後 3 個月</option></select>
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label class="form-label">長期回補詢問</label>
-              <select class="form-input"><option>施作後 10 個月</option></select>
-            </div>
+            <div class="form-group"><label class="form-label">照片回傳①（天）</label>
+              <input class="form-input" type="number" id="cfg-lip-1" value="2" min="1"></div>
+            <div class="form-group"><label class="form-label">照片回傳②（天）</label>
+              <input class="form-input" type="number" id="cfg-lip-2" value="4" min="1"></div>
+            <div class="form-group"><label class="form-label">照片回傳③（天）</label>
+              <input class="form-input" type="number" id="cfg-lip-3" value="8" min="1"></div>
+            <div class="form-group"><label class="form-label">照片回傳④（天）</label>
+              <input class="form-input" type="number" id="cfg-lip-4" value="10" min="1"></div>
+            <div class="form-group"><label class="form-label">回補提醒（月）</label>
+              <input class="form-input" type="number" id="cfg-lip-5" value="3" min="1"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-label">長期回補詢問（月）</label>
+              <input class="form-input" type="number" id="cfg-lip-6" value="10" min="1"></div>
           </div>
         </div>
+
+        <button class="btn btn-primary btn-full" onclick="saveReminderConfig()">💾 儲存設定並重新計算</button>
+        <div style="height:16px"></div>
       </div>
-      <div style="height:12px"></div>
     </div>
     <!-- ▶ END PAGE 2 -->
+
+
 
     <!-- ▶ PAGE 3：預約 -->
     <div class="page" id="page-booking">
@@ -754,123 +719,33 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <!-- ▶ PAGE 5：統計 -->
     <div class="page" id="page-stats">
 
-      <div class="sec-head"><span class="sec-title">營業收入</span><span class="sec-action">2025年5月</span></div>
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">台中收入</div>
-          <div class="stat-value" style="font-size:18px;color:var(--accent)">$28,500</div>
-          <div class="stat-sub">↑ 較上月 +12%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">台北收入</div>
-          <div class="stat-value" style="font-size:18px;color:var(--blue)">$14,200</div>
-          <div class="stat-sub">↑ 較上月 +5%</div>
-        </div>
+      <!-- 月份選擇器 -->
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 12px 0">
+        <button onclick="statPrevMonth()" style="background:var(--card);border:1px solid var(--border2);border-radius:8px;width:34px;height:34px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
+        <div style="flex:1;text-align:center;font-size:15px;font-weight:600;color:var(--text)" id="stat-month-label">—</div>
+        <button onclick="statNextMonth()" style="background:var(--card);border:1px solid var(--border2);border-radius:8px;width:34px;height:34px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
       </div>
 
-      <!-- 服務項目分析 -->
-      <div class="sec-head"><span class="sec-title">服務項目佔比</span></div>
-      <div class="card">
-        <div class="card-body">
-          <div class="bar-chart">
-            <div class="bar-row">
-              <span class="bar-label">😴 睫毛</span>
-              <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--accent)"></div></div>
-              <span class="bar-val">$9,800</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label">✏️ 眉毛</span>
-              <div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--purple)"></div></div>
-              <span class="bar-val">$8,000</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label">💋 霧唇</span>
-              <div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--pink)"></div></div>
-              <span class="bar-val">$5,700</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label">💜 髮際線</span>
-              <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--blue)"></div></div>
-              <span class="bar-val">$4,200</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label">🗑 除色</span>
-              <div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--amber)"></div></div>
-              <span class="bar-val">$1,800</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- ① 本月摘要 -->
+      <div class="sec-head" style="margin-top:8px"><span class="sec-title">① 本月摘要</span></div>
+      <div class="stats-row" id="stat-month-top"></div>
+      <div id="stat-month-body" style="margin-top:0"></div>
 
-      <!-- 回訪率 + 流失預警 同一頁 -->
-      <div class="sec-head"><span class="sec-title">回訪率 ／ 流失預警</span></div>
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">回訪率</div>
-          <div class="stat-value" style="color:var(--accent)">74%</div>
-          <div class="stat-sub">本月回流客</div>
-          <span class="stat-badge" style="background:var(--accent-pale);color:var(--accent)">良好</span>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">流失預警</div>
-          <div class="stat-value" style="color:var(--red)">2</div>
-          <div class="stat-sub">超過週期未回</div>
-          <span class="stat-badge" style="background:var(--red-pale);color:var(--red)">需追蹤</span>
-        </div>
-      </div>
-      <div class="card" style="margin-top:8px">
-        <div class="card-body">
-          <div class="fs12 fw6" style="color:var(--red);margin-bottom:8px">⚠️ 流失預警名單</div>
-          <div class="flex-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
-            <div><div class="fs13 fw6">小美</div><div class="text-muted">睫毛 · 已過 25 天未回補</div></div>
-            <button class="btn btn-secondary btn-xs">提醒</button>
-          </div>
-          <div class="flex-between" style="padding:8px 0">
-            <div><div class="fs13 fw6">雅雯</div><div class="text-muted">眉毛 · 已過 4 個月</div></div>
-            <button class="btn btn-secondary btn-xs">提醒</button>
-          </div>
-        </div>
-      </div>
+      <!-- ② 本年摘要 -->
+      <div class="sec-head" style="margin-top:4px"><span class="sec-title">② 本年摘要</span></div>
+      <div class="stats-row" id="stat-year-top"></div>
+      <div id="stat-year-body" style="margin-top:0"></div>
 
-      <!-- 來源追蹤 -->
-      <div class="sec-head"><span class="sec-title">來源追蹤</span></div>
-      <div class="card">
-        <div class="card-body">
-          <div class="bar-chart">
-            <div class="bar-row">
-              <span class="bar-label" style="width:70px">👥 客戶轉介</span>
-              <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div>
-              <span class="bar-val">60%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label" style="width:70px">🌟 KOL 分享</span>
-              <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--pink)"></div></div>
-              <span class="bar-val">25%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label" style="width:70px">🔍 Google</span>
-              <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--blue)"></div></div>
-              <span class="bar-val">15%</span>
-            </div>
-          </div>
-          <div class="divider-line"></div>
-          <div class="flex-between">
-            <span class="fs12 fw6">客戶轉介紹效益</span>
-            <span class="amount-pill">$25,400</span>
-          </div>
-          <div class="flex-between mt8">
-            <span class="fs12 fw6">KOL 分享效益</span>
-            <span style="font-size:13px;font-weight:600;color:var(--pink);background:var(--pink-pale);border-radius:10px;padding:2px 10px;">$10,600</span>
-          </div>
-          <div class="flex-between mt8">
-            <span class="fs12 fw6">Google 自來客</span>
-            <span style="font-size:13px;font-weight:600;color:var(--blue);background:var(--blue-pale);border-radius:10px;padding:2px 10px;">$6,700</span>
-          </div>
-        </div>
-      </div>
-      <div style="height:12px"></div>
+      <!-- ③ 全部總覽 -->
+      <div class="sec-head" style="margin-top:4px"><span class="sec-title">③ 全部總覽</span></div>
+      <div class="stats-row" id="stat-all-top"></div>
+      <div id="stat-all-body" style="margin-top:0"></div>
+
+      <div style="height:16px"></div>
     </div>
     <!-- ▶ END PAGE 5 -->
+
+
 
   </div>
   <!-- END page-content -->
@@ -961,6 +836,11 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
         <label class="form-label">人物備註</label>
         <textarea class="form-input" id="ed-note" rows="2" placeholder="特別注意事項…"></textarea>
       </div>
+      <div class="form-group">
+        <label class="form-label">🎂 生日日期</label>
+        <input class="form-input" id="ed-birthday" type="date" placeholder="選擇生日">
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">用於生日當月提醒推播</div>
+      </div>
 
       <div class="form-group">
         <label class="form-label">已施作項目</label>
@@ -988,35 +868,9 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <button class="btn btn-primary btn-full" onclick="saveClientEdits()">儲存資料</button>
     </div>
 
-    <!-- 施作紀錄 -->
+    <!-- 施作紀錄 (動態渲染) -->
     <div id="dt-record" style="display:none">
-      <!-- 項目選擇 -->
-      <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
-        <button class="pill-tab active">😴 睫毛</button>
-        <button class="pill-tab">✏️ 眉毛</button>
-        <button class="pill-tab">💋 霧唇</button>
-        <button class="pill-tab">💜 髮際線</button>
-        <button class="pill-tab">🗑 除色</button>
-      </div>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-dot"></div>
-          <div class="tl-content">
-            <div class="tl-date">2025-05-10</div>
-            <div class="tl-text fw6">睫毛嫁接 ｜ $3,800</div>
-            <div class="tl-detail">針具：12mm 0.10J型｜色號：深棕｜備註：下眼瞼較薄，注意膠水用量</div>
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-dot" style="background:var(--accent-light)"></div>
-          <div class="tl-content">
-            <div class="tl-date">2025-04-15</div>
-            <div class="tl-text fw6">睫毛回補 ｜ $1,800</div>
-            <div class="tl-detail">針具：10mm｜色號：深棕｜備註：回補量約50%</div>
-          </div>
-        </div>
-      </div>
-      <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openModal('modal-add-record')">＋ 新增施作紀錄</button>
+      <div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">載入中…</div>
     </div>
 
     <!-- 使用優惠 -->
@@ -1102,11 +956,11 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <div class="form-group">
       <label class="form-label">施作項目 *</label>
       <div class="service-grid" id="rec-service-grid">
-        <div class="service-item" data-svc="睫毛"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
-        <div class="service-item" data-svc="眉毛"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
-        <div class="service-item" data-svc="霧唇"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
-        <div class="service-item" data-svc="髮際線"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
-        <div class="service-item" data-svc="除色" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
+        <div class="service-item rec-svc-btn" data-svc="睫毛" onclick="selectRecSvc(this)"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
+        <div class="service-item rec-svc-btn" data-svc="眉毛" onclick="selectRecSvc(this)"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
+        <div class="service-item rec-svc-btn" data-svc="霧唇" onclick="selectRecSvc(this)"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
+        <div class="service-item rec-svc-btn" data-svc="髮際線" onclick="selectRecSvc(this)"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
+        <div class="service-item rec-svc-btn" data-svc="除色" onclick="selectRecSvc(this)" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
       </div>
       <div id="rec-svc-err" style="color:var(--red);font-size:12px;margin-top:6px;display:none">請選擇施作項目</div>
     </div>
@@ -1132,7 +986,16 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     </div>
     <div class="form-group">
       <label class="form-label">施作備註</label>
-      <textarea class="form-input" id="rec-note" rows="3" placeholder="注意事項・特殊情況…"></textarea>
+      <textarea class="form-input" id="rec-note" rows="2" placeholder="注意事項・特殊情況…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">新增客戶標籤（可選）</label>
+      <div class="tag-row" id="rec-tag-container" style="min-height:24px;flex-wrap:wrap"></div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <input class="form-input" id="rec-tag-input" placeholder="輸入標籤後按新增…" style="flex:1;font-size:13px">
+        <button class="btn btn-secondary btn-xs" onclick="addRecTag()">＋</button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">標籤將同步至客戶資料</div>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-record')">取消</button>
@@ -1227,59 +1090,218 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
      JAVASCRIPT
 ══════════════════════════════════════ -->
 <script>
-// ══════════════════════════
-// DATA STORE (localStorage)
-// ══════════════════════════
-const STORE_KEY     = 'beauty_crm_clients';
-const RECORDS_KEY   = 'beauty_crm_records';
+// ══════════════════════════════════════
+// DATA STORE
+// ══════════════════════════════════════
+const STORE_KEY    = 'beauty_crm_clients';
+const RECORDS_KEY  = 'beauty_crm_records';
+const REMINDED_KEY = 'beauty_crm_reminded';
+const CFG_KEY      = 'beauty_crm_remind_cfg';
+
+// ── Rich demo data with birthdays and records ──
+const TODAY = new Date();
+const yr = TODAY.getFullYear();
+const mo = String(TODAY.getMonth()+1).padStart(2,'0');
+const dy = String(TODAY.getDate()).padStart(2,'0');
+const todayStr = `${yr}-${mo}-${dy}`;
+function daysAgo(n){ const d=new Date(TODAY); d.setDate(d.getDate()-n); return fmtDate(d); }
+function daysAhead(n){ const d=new Date(TODAY); d.setDate(d.getDate()+n); return fmtDate(d); }
 
 const defaultClients = [
-  { id:'c1', name:'小美',  gender:'女', age:28, phone:'0912-345-678', location:'台中', source:'客戶介紹', note:'很準時，喜歡聊天，貓咪過敏不可使用動物蛋白', tags:['💡 開燈','⏱ 趕時間'], services:['睫毛','眉毛'] },
-  { id:'c2', name:'佳琪',  gender:'女', age:32, phone:'0923-456-789', location:'台北', source:'KOL分享',  note:'需要較多溝通時間',   tags:['🤫 不貼膠帶','😊 愛聊天'], services:['霧唇'] },
-  { id:'c3', name:'雅雯',  gender:'女', age:25, phone:'0934-567-890', location:'台中', source:'Google',   note:'第一次做，需要耐心說明', tags:['🌸 怕痛'], services:['髮際線','睫毛'] },
+  { id:'c1', name:'小美',  gender:'女', age:28, phone:'0912345678', birthday:`${yr}-${mo}-${dy}`,
+    location:'台中', source:'客戶介紹',
+    note:'很準時，喜歡聊天，貓咪過敏不可使用動物蛋白',
+    tags:['💡 開燈','⏱ 趕時間'], services:['睫毛','眉毛'] },
+  { id:'c2', name:'佳琪',  gender:'女', age:32, phone:'0923456789',
+    birthday:`${yr}-${String(TODAY.getMonth()+1).padStart(2,'0')}-${String(Math.min(TODAY.getDate()+3,28)).padStart(2,'0')}`,
+    location:'台北', source:'KOL分享',
+    note:'需要較多溝通時間', tags:['🤫 不貼膠帶','😊 愛聊天'], services:['霧唇'] },
+  { id:'c3', name:'雅雯',  gender:'女', age:25, phone:'0934567890',
+    birthday:`${yr}-03-15`,
+    location:'台中', source:'Google',
+    note:'第一次做，需要耐心說明', tags:['🌸 怕痛'], services:['髮際線','睫毛'] },
+  { id:'c4', name:'Tina',  gender:'女', age:30, phone:'0945678901',
+    birthday:`${yr}-${mo}-${String(Math.max(TODAY.getDate()-1,1)).padStart(2,'0')}`,
+    location:'台北', source:'Instagram',
+    note:'喜歡自然感', tags:['🌿 自然系'], services:['眉毛'] },
+  { id:'c5', name:'芷嫻',  gender:'女', age:22, phone:'0956789012',
+    birthday:`${yr}-12-25`,
+    location:'台中', source:'客戶介紹',
+    note:'學生，有時會遲到5分鐘', tags:['📚 學生'], services:['睫毛'] },
 ];
 
-function loadClients() {
-  try { const r = localStorage.getItem(STORE_KEY); return r ? JSON.parse(r) : defaultClients; }
-  catch(e) { return defaultClients; }
-}
-function saveClients(list) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch(e) {}
-}
+const defaultRecords = {
+  'c1': [
+    { id:'r101', svc:'睫毛', date: daysAgo(20), needle:'12mm 0.10J', color:'深棕', amount:3800, note:'下眼瞼較薄注意膠水用量' },
+    { id:'r102', svc:'眉毛', date: daysAgo(60), needle:'3RL', color:'霧感棕', amount:8000, note:'第一次霧眉，客戶喜歡自然感' },
+    { id:'r103', svc:'睫毛', date: daysAgo(3),  needle:'10mm 0.07C', color:'純黑', amount:1800, note:'回補約45%' },
+  ],
+  'c2': [
+    { id:'r201', svc:'霧唇', date: daysAgo(10), needle:'5RL', color:'玫瑰粉', amount:9000, note:'客戶希望偏深一點，第二層加深' },
+    { id:'r202', svc:'霧唇', date: daysAgo(100),needle:'5RL', color:'豆沙粉', amount:8500, note:'首次施作' },
+  ],
+  'c3': [
+    { id:'r301', svc:'髮際線', date: daysAgo(5), needle:'1RL', color:'自然黑', amount:12000, note:'髮際線偏高，設計感偏自然弧度' },
+    { id:'r302', svc:'睫毛',   date: daysAgo(90),needle:'11mm 0.10J', color:'深棕', amount:3500, note:'初次，客戶眼型為丹鳳眼' },
+  ],
+  'c4': [
+    { id:'r401', svc:'眉毛', date: daysAgo(35), needle:'3RL', color:'亞麻棕', amount:7500, note:'客戶要求霧感，用輕手法' },
+  ],
+  'c5': [
+    { id:'r501', svc:'睫毛', date: daysAgo(2), needle:'12mm 0.07D', color:'純黑', amount:3200, note:'首次做嫁接，溝通款式約20分鐘' },
+  ],
+};
 
-function loadRecords() {
-  try { const r = localStorage.getItem(RECORDS_KEY); return r ? JSON.parse(r) : {}; }
-  catch(e) { return {}; }
-}
-function saveRecordsDB(db) {
-  try { localStorage.setItem(RECORDS_KEY, JSON.stringify(db)); } catch(e) {}
-}
+const defaultCfg = {
+  lash: [5, 17, 3],
+  brow: [14, 30, 3, 10],
+  lip:  [2, 4, 8, 10, 3, 10]
+};
 
-let clients       = loadClients();
-let recordsDB     = loadRecords();   // { clientId: [{id,svc,date,needle,color,amount,note},...] }
+function ls(key,def){ try{ const r=localStorage.getItem(key); return r?JSON.parse(r):def; } catch(e){ return def; } }
+function lsSave(key,val){ try{ localStorage.setItem(key,JSON.stringify(val)); } catch(e){} }
+
+let clients    = ls(STORE_KEY,    defaultClients);
+let recordsDB  = ls(RECORDS_KEY,  defaultRecords);
+let remindedDB = ls(REMINDED_KEY, {});
+let cfg        = ls(CFG_KEY,      defaultCfg);
+
 let currentClientId = null;
 let currentFilter   = '全部';
+let currentRecordId = null;
+let statYear  = TODAY.getFullYear();
+let statMonth = TODAY.getMonth(); // 0-based
 
-const serviceMap = {
-  '睫毛':   { icon:'😴' },
-  '眉毛':   { icon:'✏️' },
-  '霧唇':   { icon:'💋' },
-  '髮際線': { icon:'💜' },
-  '除色':   { icon:'🗑' },
-};
-const tagColors = ['green','amber','red','blue','purple','pink'];
+const serviceMap = { '睫毛':{icon:'😴'}, '眉毛':{icon:'✏️'}, '霧唇':{icon:'💋'}, '髮際線':{icon:'💜'}, '除色':{icon:'🗑'} };
+const tagColors  = ['green','amber','red','blue','purple','pink'];
 
-// ══════════════════════════
-// RENDER CLIENT LIST
-// ══════════════════════════
-function clientRowHtml(c) {
-  const loc = c.location === '台中'
-    ? `<span class="loc-badge loc-tc">台中</span>`
-    : `<span class="loc-badge loc-tp">台北</span>`;
-  const svcText = (c.services||[]).map(s=>(serviceMap[s]||{}).icon+' '+s).join('・')||'未設定';
-  const tagsHtml = (c.tags||[]).slice(0,3).map((t,i)=>{
-    return `<span class="tag ${tagColors[i%tagColors.length]}" style="font-size:11px;padding:3px 8px">${t}</span>`;
-  }).join('');
+// ══════════════════════════════════════
+// DATE HELPERS
+// ══════════════════════════════════════
+function fmtDate(d){ if(!d) return ''; return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDisplay(d){ if(!d) return ''; return (d.getMonth()+1)+'月'+d.getDate()+'日'; }
+function parseDate(s){ if(!s) return null; const p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function dateOnly(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function addMonths(d,n){ const r=new Date(d); r.setMonth(r.getMonth()+n); return r; }
+function endOfWeek(d){ const r=new Date(d); r.setDate(r.getDate()+(7-r.getDay())); return dateOnly(r); }
+
+// ══════════════════════════════════════
+// STATS PAGE
+// ══════════════════════════════════════
+function allRecordsList(){
+  const list=[];
+  Object.entries(recordsDB).forEach(([cid,recs])=>{
+    const c=clients.find(x=>x.id===cid);
+    (recs||[]).forEach(r=>list.push({...r, clientId:cid, clientName:c?c.name:'?', location:c?c.location:''}));
+  });
+  return list;
+}
+
+function sumRecords(recs){ return recs.reduce((s,r)=>s+(Number(r.amount)||0),0); }
+
+function renderBarChart(rows){
+  if(!rows.length) return '<div style="color:var(--text3);font-size:12px;text-align:center;padding:12px">尚無數據</div>';
+  const max=Math.max(...rows.map(r=>r.val),1);
+  const colors={'睫毛':'var(--accent)','眉毛':'var(--purple)','霧唇':'var(--pink)','髮際線':'var(--blue)','除色':'var(--amber)'};
+  return `<div style="padding:8px 0">`+rows.map(r=>{
+    const pct=Math.round((r.val/max)*100);
+    const col=colors[r.label]||'var(--accent)';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      <span style="font-size:12px;color:var(--text2);width:64px;text-align:right;flex-shrink:0">${r.icon||''} ${r.label}</span>
+      <div style="flex:1;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${col};border-radius:5px;transition:width 0.5s"></div>
+      </div>
+      <span style="font-size:12px;color:var(--text2);width:52px;flex-shrink:0">$${r.val.toLocaleString()}</span>
+    </div>`;
+  }).join('')+`</div>`;
+}
+
+function statCardHtml(label,val,sub=''){
+  return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value" style="font-size:18px">$${Number(val).toLocaleString()}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
+}
+
+function renderStats(){
+  const all=allRecordsList();
+
+  // ── Month ──
+  const mRecs=all.filter(r=>{ const d=parseDate(r.date); return d&&d.getFullYear()===statYear&&d.getMonth()===statMonth; });
+  const mTc=sumRecords(mRecs.filter(r=>r.location==='台中'));
+  const mTp=sumRecords(mRecs.filter(r=>r.location==='台北'));
+  const mTotal=mTc+mTp;
+  document.getElementById('stat-month-top').innerHTML=
+    statCardHtml('台中收入',mTc,mRecs.filter(r=>r.location==='台中').length+' 筆')+
+    statCardHtml('台北收入',mTp,mRecs.filter(r=>r.location==='台北').length+' 筆');
+  const mBySvc=Object.entries(serviceMap).map(([svc,{icon}])=>({
+    label:svc,icon,val:sumRecords(mRecs.filter(r=>r.svc===svc))
+  })).filter(r=>r.val>0);
+  document.getElementById('stat-month-body').innerHTML=`<div class="card"><div class="card-body">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px">本月總計 <span style="color:var(--accent)">$${mTotal.toLocaleString()}</span>｜${mRecs.length} 筆</div>
+    ${renderBarChart(mBySvc)}
+  </div></div>`;
+
+  // ── Year ──
+  const yRecs=all.filter(r=>{ const d=parseDate(r.date); return d&&d.getFullYear()===statYear; });
+  const yTc=sumRecords(yRecs.filter(r=>r.location==='台中'));
+  const yTp=sumRecords(yRecs.filter(r=>r.location==='台北'));
+  const yTotal=yTc+yTp;
+  document.getElementById('stat-year-top').innerHTML=
+    statCardHtml('台中全年',yTc,yRecs.filter(r=>r.location==='台中').length+' 筆')+
+    statCardHtml('台北全年',yTp,yRecs.filter(r=>r.location==='台北').length+' 筆');
+  const yBySvc=Object.entries(serviceMap).map(([svc,{icon}])=>({
+    label:svc,icon,val:sumRecords(yRecs.filter(r=>r.svc===svc))
+  })).filter(r=>r.val>0);
+  // source breakdown
+  const srcMap={};
+  yRecs.forEach(r=>{ const c=clients.find(x=>x.id===r.clientId); const s=c?c.source:'其他'; srcMap[s]=(srcMap[s]||0)+r.amount; });
+  const srcRows=Object.entries(srcMap).map(([label,val])=>({label,val})).sort((a,b)=>b.val-a.val);
+  document.getElementById('stat-year-body').innerHTML=`<div class="card"><div class="card-body">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px">${statYear}年總計 <span style="color:var(--accent)">$${yTotal.toLocaleString()}</span>｜${yRecs.length} 筆</div>
+    ${renderBarChart(yBySvc)}
+    <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px">來源追蹤</div>
+    ${renderBarChart(srcRows)}
+  </div></div>`;
+
+  // ── All time ──
+  const aTc=sumRecords(all.filter(r=>r.location==='台中'));
+  const aTp=sumRecords(all.filter(r=>r.location==='台北'));
+  const aTotal=aTc+aTp;
+  document.getElementById('stat-all-top').innerHTML=
+    statCardHtml('台中累計',aTc)+statCardHtml('台北累計',aTp);
+  const aBySvc=Object.entries(serviceMap).map(([svc,{icon}])=>({
+    label:svc,icon,val:sumRecords(all.filter(r=>r.svc===svc))
+  })).filter(r=>r.val>0);
+  // top clients
+  const clientTotals=clients.map(c=>({
+    name:c.name, val:sumRecords((recordsDB[c.id]||[]))
+  })).filter(x=>x.val>0).sort((a,b)=>b.val-a.val).slice(0,5);
+  document.getElementById('stat-all-body').innerHTML=`<div class="card"><div class="card-body">
+    <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px">歷史總計 <span style="color:var(--accent)">$${aTotal.toLocaleString()}</span>｜${all.length} 筆</div>
+    ${renderBarChart(aBySvc)}
+    <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px">客戶消費排行</div>
+    ${renderBarChart(clientTotals.map(x=>({label:x.name,val:x.val})))}
+  </div></div>`;
+
+  // Label
+  document.getElementById('stat-month-label').textContent=`${statYear} 年 ${statMonth+1} 月`;
+}
+
+function statPrevMonth(){
+  if(--statMonth<0){ statMonth=11; statYear--; } renderStats();
+}
+function statNextMonth(){
+  if(++statMonth>11){ statMonth=0; statYear++; } renderStats();
+}
+
+// ══════════════════════════════════════
+// CLIENT LIST
+// ══════════════════════════════════════
+function clientRowHtml(c){
+  const loc=c.location==='台中'?`<span class="loc-badge loc-tc">台中</span>`:`<span class="loc-badge loc-tp">台北</span>`;
+  const svcText=(c.services||[]).map(s=>(serviceMap[s]||{}).icon+' '+s).join('・')||'未設定';
+  const tagsHtml=(c.tags||[]).slice(0,3).map((t,i)=>
+    `<span class="tag ${tagColors[i%tagColors.length]}" style="font-size:11px;padding:3px 8px">${t}</span>`
+  ).join('');
   return `<div class="list-item-wrap" style="border-bottom:1px solid var(--border)">
     <div class="list-item" style="border-bottom:none;padding-bottom:6px" onclick="openClientDetail('${c.id}')">
       <div class="avatar">${c.name.charAt(0)}</div>
@@ -1296,195 +1318,130 @@ function clientRowHtml(c) {
   </div>`;
 }
 
-function renderClientList(filter) {
-  if (filter !== undefined) currentFilter = filter;
-  const listEl  = document.getElementById('client-list');
-  const countEl = document.getElementById('client-count');
-  const totalEl = document.getElementById('stat-total');
-  const tcEl    = document.getElementById('stat-tc');
-
-  let filtered = currentFilter && currentFilter !== '全部'
-    ? clients.filter(c=>(c.services||[]).includes(currentFilter))
-    : clients;
-
-  countEl.textContent = '共 ' + filtered.length + ' 位';
-  totalEl.textContent = clients.length;
-  const tc = clients.filter(c=>c.location==='台中').length;
-  const tp = clients.filter(c=>c.location==='台北').length;
-  tcEl.textContent = '台中 '+tc+'・台北 '+tp;
-
-  if (filtered.length===0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><p>尚無客戶資料</p></div>`;
-    return;
-  }
-  listEl.innerHTML = filtered.map(clientRowHtml).join('');
+function renderClientList(filter){
+  if(filter!==undefined) currentFilter=filter;
+  const listEl=document.getElementById('client-list');
+  const countEl=document.getElementById('client-count');
+  const totalEl=document.getElementById('stat-total');
+  const tcEl=document.getElementById('stat-tc');
+  let filtered=currentFilter&&currentFilter!=='全部'
+    ?clients.filter(c=>(c.services||[]).includes(currentFilter)):clients;
+  countEl.textContent='共 '+filtered.length+' 位';
+  totalEl.textContent=clients.length;
+  const tc=clients.filter(c=>c.location==='台中').length;
+  const tp=clients.filter(c=>c.location==='台北').length;
+  tcEl.textContent='台中 '+tc+'・台北 '+tp;
+  listEl.innerHTML=filtered.length===0
+    ?`<div class="empty"><div class="empty-icon">👤</div><p>尚無客戶資料</p></div>`
+    :filtered.map(clientRowHtml).join('');
 }
 
-// ══════════════════════════
-// DELETE CLIENT (防呆確認)
-// ══════════════════════════
-function confirmDelete(id, name) {
-  showConfirm(
-    `確定要刪除「${name}」的所有資料嗎？\n此操作無法復原。`,
-    () => {
-      clients = clients.filter(c => c.id !== id);
-      delete recordsDB[id];
-      saveClients(clients);
-      saveRecordsDB(recordsDB);
-      renderClientList();
-      showToast('🗑 已刪除客戶：' + name);
-    }
-  );
+// ══════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════
+function confirmDelete(id,name){
+  showConfirm(`確定要刪除「${name}」的所有資料嗎？\n此操作無法復原。`,()=>{
+    clients=clients.filter(c=>c.id!==id);
+    delete recordsDB[id];
+    lsSave(STORE_KEY,clients); lsSave(RECORDS_KEY,recordsDB);
+    renderClientList(); showToast('🗑 已刪除：'+name);
+  });
 }
 
-// ══════════════════════════
-// CONFIRM DIALOG
-// ══════════════════════════
-function showConfirm(msg, onConfirm) {
-  let overlay = document.getElementById('confirm-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'confirm-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(30,25,18,0.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px';
-    overlay.innerHTML = `<div style="background:var(--card);border-radius:16px;padding:24px 20px;max-width:320px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
-      <div id="confirm-msg" style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:20px;white-space:pre-line"></div>
+function showConfirm(msg,onOk){
+  let ov=document.getElementById('confirm-overlay');
+  if(!ov){
+    ov=document.createElement('div'); ov.id='confirm-overlay';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(30,25,18,0.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px';
+    ov.innerHTML=`<div style="background:var(--card);border-radius:16px;padding:24px 20px;max-width:320px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+      <div id="confirm-msg" style="font-size:14px;line-height:1.7;color:var(--text);margin-bottom:20px;white-space:pre-line"></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-secondary" style="flex:1" id="confirm-cancel">取消</button>
-        <button class="btn btn-danger" style="flex:1" id="confirm-ok">確定刪除</button>
-      </div>
-    </div>`;
-    document.body.appendChild(overlay);
+        <button class="btn btn-danger" style="flex:1" id="confirm-ok">確定</button>
+      </div></div>`;
+    document.body.appendChild(ov);
   }
-  document.getElementById('confirm-msg').textContent = msg;
-  overlay.style.display = 'flex';
-  document.getElementById('confirm-cancel').onclick = () => { overlay.style.display = 'none'; };
-  document.getElementById('confirm-ok').onclick = () => { overlay.style.display = 'none'; onConfirm(); };
+  document.getElementById('confirm-msg').textContent=msg;
+  ov.style.display='flex';
+  document.getElementById('confirm-cancel').onclick=()=>{ ov.style.display='none'; };
+  document.getElementById('confirm-ok').onclick=()=>{ ov.style.display='none'; onOk(); };
 }
 
-// ══════════════════════════
-// OPEN CLIENT DETAIL
-// ══════════════════════════
-function openClientDetail(id) {
-  currentClientId = id;
-  const c = clients.find(x => x.id === id);
-  if (!c) return;
-
-  document.getElementById('ed-name').value     = c.name || '';
-  document.getElementById('ed-gender').value   = c.gender || '女';
-  document.getElementById('ed-age').value      = c.age || '';
-  document.getElementById('ed-phone').value    = c.phone || '';
-  document.getElementById('ed-location').value = c.location || '台中';
-  document.getElementById('ed-source').value   = c.source || '客戶介紹';
-  document.getElementById('ed-note').value     = c.note || '';
-
-  document.querySelectorAll('#ed-services .service-item').forEach(item => {
-    item.classList.toggle('selected', (c.services||[]).includes(item.dataset.svc));
-  });
-
-  const tagContainer = document.getElementById('tag-container');
-  tagContainer.innerHTML = (c.tags||[]).map((t,i) => {
-    return `<span class="tag ${tagColors[i%tagColors.length]}">${t} <span class="del" onclick="removeTag(this)">×</span></span>`;
-  }).join('');
-
-  // render records tab
-  renderRecords(id);
-
-  switchDetailTab(
-    document.querySelector('#modal-client-detail .pill-tabs .pill-tab'),
-    'dt-basic'
+// ══════════════════════════════════════
+// CLIENT DETAIL
+// ══════════════════════════════════════
+function openClientDetail(id){
+  currentClientId=id;
+  const c=clients.find(x=>x.id===id); if(!c) return;
+  document.getElementById('ed-name').value     = c.name||'';
+  document.getElementById('ed-gender').value   = c.gender||'女';
+  document.getElementById('ed-age').value      = c.age||'';
+  document.getElementById('ed-phone').value    = c.phone||'';
+  document.getElementById('ed-location').value = c.location||'台中';
+  document.getElementById('ed-source').value   = c.source||'客戶介紹';
+  document.getElementById('ed-note').value     = c.note||'';
+  const bdEl=document.getElementById('ed-birthday'); if(bdEl) bdEl.value=c.birthday||'';
+  document.querySelectorAll('#ed-services .service-item').forEach(item=>
+    item.classList.toggle('selected',(c.services||[]).includes(item.dataset.svc))
   );
+  const tc=document.getElementById('tag-container');
+  tc.innerHTML=(c.tags||[]).map((t,i)=>
+    `<span class="tag ${tagColors[i%tagColors.length]}">${t} <span class="del" onclick="removeTag(this)">×</span></span>`
+  ).join('');
+  renderRecords(id);
+  switchDetailTab(document.querySelector('#modal-client-detail .pill-tabs .pill-tab'),'dt-basic');
   openModal('modal-client-detail');
 }
 
-// ══════════════════════════
-// SAVE CLIENT EDITS (防呆)
-// ══════════════════════════
-function saveClientEdits() {
-  const nameVal = document.getElementById('ed-name').value.trim();
-  const nameErr = document.getElementById('ed-name-err');
-  if (!nameVal) {
-    nameErr.style.display = 'block';
-    document.getElementById('ed-name').focus();
-    return;
-  }
-  nameErr.style.display = 'none';
-
-  const c = clients.find(x => x.id === currentClientId);
-  if (!c) return;
-
-  c.name     = nameVal;
-  c.gender   = document.getElementById('ed-gender').value;
-  c.age      = document.getElementById('ed-age').value;
-  c.phone    = document.getElementById('ed-phone').value.trim();
-  c.location = document.getElementById('ed-location').value;
-  c.source   = document.getElementById('ed-source').value;
-  c.note     = document.getElementById('ed-note').value.trim();
-  c.services = [...document.querySelectorAll('#ed-services .service-item.selected')].map(el=>el.dataset.svc);
-  c.tags     = [...document.querySelectorAll('#tag-container .tag')].map(el=>el.childNodes[0].textContent.trim()).filter(Boolean);
-
-  saveClients(clients);
-  renderClientList();
-  closeModal('modal-client-detail');
-  showToast('✅ 已儲存：' + c.name);
+function saveClientEdits(){
+  const nameVal=document.getElementById('ed-name').value.trim();
+  const nameErr=document.getElementById('ed-name-err');
+  if(!nameVal){ nameErr.style.display='block'; document.getElementById('ed-name').focus(); return; }
+  nameErr.style.display='none';
+  const c=clients.find(x=>x.id===currentClientId); if(!c) return;
+  c.name=nameVal; c.gender=document.getElementById('ed-gender').value;
+  c.age=document.getElementById('ed-age').value;
+  c.phone=document.getElementById('ed-phone').value.trim();
+  c.location=document.getElementById('ed-location').value;
+  c.source=document.getElementById('ed-source').value;
+  c.note=document.getElementById('ed-note').value.trim();
+  const bdEl=document.getElementById('ed-birthday'); if(bdEl) c.birthday=bdEl.value;
+  c.services=[...document.querySelectorAll('#ed-services .service-item.selected')].map(el=>el.dataset.svc);
+  c.tags=[...document.querySelectorAll('#tag-container .tag')].map(el=>el.childNodes[0].textContent.trim()).filter(Boolean);
+  lsSave(STORE_KEY,clients); renderClientList(); closeModal('modal-client-detail');
+  showToast('✅ 已儲存：'+c.name);
 }
 
-// ══════════════════════════
-// ADD NEW CLIENT (防呆)
-// ══════════════════════════
-function saveNewClient() {
-  const name  = document.getElementById('nc-name').value.trim();
-  const phone = document.getElementById('nc-phone').value.trim();
-  const errEl = document.getElementById('nc-error');
-  const phErr = document.getElementById('nc-phone-err');
-
-  let valid = true;
-  if (!name)  { errEl.style.display = 'block'; valid = false; } else errEl.style.display = 'none';
-  if (phone && !/^09\d{2}[- ]?\d{3}[- ]?\d{3}$/.test(phone.replace(/\s/g,''))) {
-    phErr.style.display = 'block'; valid = false;
-  } else phErr.style.display = 'none';
-  if (!valid) return;
-
-  const newClient = {
-    id:       'c' + Date.now(),
-    name,
-    gender:   document.getElementById('nc-gender').value,
-    age:      document.getElementById('nc-age').value,
-    phone,
-    location: document.getElementById('nc-location').value,
-    source:   document.getElementById('nc-source').value,
-    note:     document.getElementById('nc-note').value.trim(),
-    tags:[], services:[],
-  };
-
-  clients.unshift(newClient);
-  saveClients(clients);
-  renderClientList();
-  ['nc-name','nc-age','nc-phone','nc-note'].forEach(id=>document.getElementById(id).value='');
-  closeModal('modal-add-client');
-  showToast('✅ 已新增：' + name);
+function saveNewClient(){
+  const name=document.getElementById('nc-name').value.trim();
+  const phone=document.getElementById('nc-phone').value.trim();
+  const errEl=document.getElementById('nc-error');
+  const phErr=document.getElementById('nc-phone-err');
+  let ok=true;
+  if(!name){ errEl.style.display='block'; ok=false; } else errEl.style.display='none';
+  if(phone&&!/^09\d{8}$/.test(phone.replace(/[-\s]/g,''))){ phErr.style.display='block'; ok=false; } else phErr.style.display='none';
+  if(!ok) return;
+  clients.unshift({ id:'c'+Date.now(), name, gender:document.getElementById('nc-gender').value,
+    age:document.getElementById('nc-age').value, phone, birthday:'',
+    location:document.getElementById('nc-location').value, source:document.getElementById('nc-source').value,
+    note:document.getElementById('nc-note').value.trim(), tags:[], services:[] });
+  lsSave(STORE_KEY,clients); renderClientList();
+  ['nc-name','nc-age','nc-phone','nc-note'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  closeModal('modal-add-client'); showToast('✅ 已新增：'+name);
 }
 
-// ══════════════════════════
-// RECORDS (施作紀錄)
-// ══════════════════════════
-function renderRecords(clientId) {
-  const recs = (recordsDB[clientId]||[]).slice().reverse();
-  const container = document.getElementById('dt-record');
-  const addBtn = `<button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openModal('modal-add-record')">＋ 新增施作紀錄</button>`;
-
-  if (recs.length === 0) {
-    container.innerHTML = `
-      <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
-        <button class="pill-tab active">全部</button>
-        <button class="pill-tab">😴 睫毛</button><button class="pill-tab">✏️ 眉毛</button>
-        <button class="pill-tab">💋 霧唇</button><button class="pill-tab">💜 髮際線</button><button class="pill-tab">🗑 除色</button>
-      </div>
-      <div class="empty"><div class="empty-icon">📋</div><p>尚無施作紀錄</p></div>
-      ${addBtn}`;
+// ══════════════════════════════════════
+// RECORDS
+// ══════════════════════════════════════
+function renderRecords(clientId){
+  const recs=(recordsDB[clientId]||[]).slice().reverse();
+  const container=document.getElementById('dt-record');
+  const addBtn=`<button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openAddRecord()">＋ 新增施作紀錄</button>`;
+  if(!recs.length){
+    container.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><p>尚無施作紀錄</p></div>${addBtn}`;
     return;
   }
-
-  const tlHtml = recs.map(r => `
+  const tlHtml=recs.map(r=>`
     <div class="tl-item">
       <div class="tl-dot"></div>
       <div class="tl-content">
@@ -1494,184 +1451,313 @@ function renderRecords(clientId) {
         </div>
         <div class="tl-text fw6">${(serviceMap[r.svc]||{}).icon||''} ${r.svc}</div>
         <div class="tl-detail">針具：${r.needle||'—'} ｜ 色號：${r.color||'—'}<br>${r.note||''}</div>
+        ${(r.tags||[]).length?`<div class="tag-row mt4">${r.tags.map((t,i)=>`<span class="tag ${tagColors[i%tagColors.length]}" style="font-size:11px;padding:2px 7px">${t}</span>`).join('')}</div>`:''}
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn btn-secondary btn-xs" onclick="openEditRecord('${r.id}')">✏️ 編輯</button>
+          <button class="btn btn-danger btn-xs" onclick="confirmDeleteRecord('${r.id}','${r.svc}')">🗑 刪除</button>
+        </div>
       </div>
     </div>`).join('');
-
-  container.innerHTML = `
-    <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
-      <button class="pill-tab active">全部</button>
-    </div>
-    <div class="timeline">${tlHtml}</div>
-    ${addBtn}`;
+  container.innerHTML=`<div class="timeline">${tlHtml}</div>${addBtn}`;
 }
 
-function saveRecord() {
-  // 防呆驗證
-  const selectedSvc = document.querySelector('#rec-service-grid .service-item.selected');
-  const date   = document.getElementById('rec-date').value;
-  const amount = document.getElementById('rec-amount').value;
+function openAddRecord(){
+  currentRecordId=null;
+  document.querySelector('#modal-add-record .modal-title').textContent='新增施作紀錄';
+  document.querySelectorAll('#rec-service-grid .service-item').forEach(el=>el.classList.remove('selected'));
+  ['rec-date','rec-needle','rec-color','rec-amount','rec-note'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const tc=document.getElementById('rec-tag-container'); if(tc) tc.innerHTML='';
+  ['rec-svc-err','rec-date-err','rec-amount-err'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  openModal('modal-add-record');
+}
 
-  let valid = true;
-  const svcErr    = document.getElementById('rec-svc-err');
-  const dateErr   = document.getElementById('rec-date-err');
-  const amountErr = document.getElementById('rec-amount-err');
+function openEditRecord(recId){
+  const recs=recordsDB[currentClientId]||[];
+  const rec=recs.find(r=>r.id===recId); if(!rec) return;
+  currentRecordId=recId;
+  document.querySelector('#modal-add-record .modal-title').textContent='編輯施作紀錄';
+  document.querySelectorAll('#rec-service-grid .service-item').forEach(el=>
+    el.classList.toggle('selected',el.dataset.svc===rec.svc)
+  );
+  const sv=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; };
+  sv('rec-date',rec.date); sv('rec-needle',rec.needle); sv('rec-color',rec.color);
+  sv('rec-amount',rec.amount); sv('rec-note',rec.note);
+  const tc=document.getElementById('rec-tag-container');
+  if(tc) tc.innerHTML=(rec.tags||[]).map((t,i)=>
+    `<span class="tag ${tagColors[i%tagColors.length]}" style="font-size:11px;padding:3px 8px">${t} <span onclick="this.parentElement.remove()" style="cursor:pointer;opacity:0.6">×</span></span>`
+  ).join('');
+  openModal('modal-add-record');
+}
 
-  if (!selectedSvc)        { svcErr.style.display='block';    valid=false; } else svcErr.style.display='none';
-  if (!date)               { dateErr.style.display='block';   valid=false; } else dateErr.style.display='none';
-  if (!amount || amount<0) { amountErr.style.display='block'; valid=false; } else amountErr.style.display='none';
-  if (!valid) return;
+function saveRecord(){
+  const sel=document.querySelector('#rec-service-grid .service-item.selected');
+  const date=document.getElementById('rec-date').value;
+  const amountRaw=document.getElementById('rec-amount').value;
+  let ok=true;
+  const show=(id,v)=>{ const el=document.getElementById(id); if(el) el.style.display=v?'block':'none'; };
+  if(!sel){ show('rec-svc-err',true); ok=false; } else show('rec-svc-err',false);
+  if(!date){ show('rec-date-err',true); ok=false; } else show('rec-date-err',false);
+  // ── 防呆：金額需為100的倍數 ──
+  const amount=parseInt(amountRaw)||0;
+  if(!amountRaw||amount<=0||amount%100!==0){
+    const el=document.getElementById('rec-amount-err');
+    if(el){ el.textContent='⚠ 請輸入金額（需為 100 的倍數，如 3800）'; el.style.display='block'; }
+    ok=false;
+  } else show('rec-amount-err',false);
+  if(!ok) return;
 
-  const rec = {
-    id:     'r' + Date.now(),
-    svc:    selectedSvc.dataset.svc,
-    date,
-    needle: document.getElementById('rec-needle').value.trim(),
-    color:  document.getElementById('rec-color').value.trim(),
-    amount: Number(amount),
-    note:   document.getElementById('rec-note').value.trim(),
-  };
+  // collect tags from rec-tag-container
+  const recTags=[...document.querySelectorAll('#rec-tag-container .tag')].map(el=>el.childNodes[0].textContent.trim()).filter(Boolean);
 
-  if (!recordsDB[currentClientId]) recordsDB[currentClientId] = [];
-  recordsDB[currentClientId].push(rec);
-  saveRecordsDB(recordsDB);
+  if(!recordsDB[currentClientId]) recordsDB[currentClientId]=[];
+  const recs=recordsDB[currentClientId];
 
-  // 自動更新客戶已施作項目
-  const c = clients.find(x=>x.id===currentClientId);
-  if (c && !(c.services||[]).includes(rec.svc)) {
-    c.services = [...(c.services||[]), rec.svc];
-    saveClients(clients);
-    renderClientList();
+  if(currentRecordId){
+    const idx=recs.findIndex(r=>r.id===currentRecordId);
+    if(idx>-1) recs[idx]={...recs[idx], svc:sel.dataset.svc, date,
+      needle:document.getElementById('rec-needle').value.trim(),
+      color:document.getElementById('rec-color').value.trim(), amount, note:document.getElementById('rec-note').value.trim(), tags:recTags};
+  } else {
+    recs.push({ id:'r'+Date.now(), svc:sel.dataset.svc, date,
+      needle:document.getElementById('rec-needle').value.trim(),
+      color:document.getElementById('rec-color').value.trim(), amount, note:document.getElementById('rec-note').value.trim(), tags:recTags });
   }
 
-  // 清空 modal
-  document.querySelectorAll('#rec-service-grid .service-item').forEach(el=>el.classList.remove('selected'));
-  ['rec-date','rec-needle','rec-color','rec-amount','rec-note'].forEach(id=>document.getElementById(id).value='');
-
+  // auto-update services
+  const c=clients.find(x=>x.id===currentClientId);
+  if(c&&!(c.services||[]).includes(sel.dataset.svc)){
+    c.services=[...(c.services||[]),sel.dataset.svc];
+  }
+  // sync tags to client
+  if(c&&recTags.length){
+    const existing=new Set(c.tags||[]);
+    recTags.forEach(t=>existing.add(t));
+    c.tags=[...existing];
+    lsSave(STORE_KEY,clients); renderClientList();
+  }
+  lsSave(RECORDS_KEY,recordsDB);
   renderRecords(currentClientId);
   closeModal('modal-add-record');
-  showToast('✅ 已儲存施作紀錄');
+  showToast(currentRecordId?'✅ 紀錄已更新':'✅ 紀錄已儲存');
+  currentRecordId=null;
 }
 
-// ══════════════════════════
-// FILTER
-// ══════════════════════════
-function setFilter(btn, label) {
-  currentFilter = label;
+function confirmDeleteRecord(recId,svcName){
+  showConfirm(`確定要刪除這筆「${svcName}」施作紀錄？\n此操作無法復原。`,()=>{
+    recordsDB[currentClientId]=(recordsDB[currentClientId]||[]).filter(r=>r.id!==recId);
+    lsSave(RECORDS_KEY,recordsDB);
+    renderRecords(currentClientId);
+    showToast('🗑 施作紀錄已刪除');
+  });
+}
+
+// single-select for rec grid
+function selectRecSvc(el){
+  document.querySelectorAll('#rec-service-grid .service-item').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  const e=document.getElementById('rec-svc-err'); if(e) e.style.display='none';
+}
+
+// rec-tag helpers
+let recTagColorIdx=0;
+function addRecTag(){
+  const input=document.getElementById('rec-tag-input');
+  const val=input.value.trim(); if(!val) return;
+  const tag=document.createElement('span');
+  tag.className=`tag ${tagColors[recTagColorIdx++%tagColors.length]}`;
+  tag.style.cssText='font-size:11px;padding:3px 8px';
+  tag.innerHTML=`${val} <span onclick="this.parentElement.remove()" style="cursor:pointer;opacity:0.6">×</span>`;
+  document.getElementById('rec-tag-container').appendChild(tag);
+  input.value='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.activeElement.id==='rec-tag-input') addRecTag();
+  if(e.key==='Enter'&&document.activeElement.id==='new-tag-input') addTag();
+});
+
+// amount auto-round to 100
+document.addEventListener('change',e=>{
+  if(e.target.id==='rec-amount'){
+    const v=parseInt(e.target.value)||0;
+    const rounded=Math.round(v/100)*100;
+    if(rounded!==v) e.target.value=rounded;
+  }
+});
+
+// ══════════════════════════════════════
+// REMINDER ENGINE
+// ══════════════════════════════════════
+function genReminders(){
+  const reminders=[];
+  const now=new Date();
+  clients.forEach(c=>{
+    // birthday
+    if(c.birthday){
+      const bd=parseDate(c.birthday);
+      if(bd){
+        const thisYr=new Date(now.getFullYear(),bd.getMonth(),bd.getDate());
+        const key=`${c.id}|birthday|${now.getFullYear()}`;
+        reminders.push({ clientId:c.id, clientName:c.name, svc:'生日', label:'🎂 生日祝福',
+          dueDate:thisYr, key, phone:c.phone });
+      }
+    }
+    // records
+    (recordsDB[c.id]||[]).forEach(rec=>{
+      const base=parseDate(rec.date); if(!base) return;
+      const mk=(label,days,months)=>{
+        const due=months?addMonths(base,months):addDays(base,days);
+        const key=`${c.id}|${rec.id}|${label}`;
+        reminders.push({ clientId:c.id, clientName:c.name, svc:rec.svc, label, dueDate:due, key, phone:c.phone });
+      };
+      if(rec.svc==='睫毛'){ mk('第一次關心',cfg.lash[0]); mk('三週回補提醒',cfg.lash[1]); mk('長期回訪詢問',0,cfg.lash[2]); }
+      else if(rec.svc==='眉毛'){ mk('第一次關心',cfg.brow[0]); mk('照片回傳',cfg.brow[1]); mk('回補提醒',0,cfg.brow[2]); mk('長期回補詢問',0,cfg.brow[3]); }
+      else if(rec.svc==='霧唇'||rec.svc==='髮際線'){
+        mk('照片回傳①',cfg.lip[0]); mk('照片回傳②',cfg.lip[1]); mk('照片回傳③',cfg.lip[2]); mk('照片回傳④',cfg.lip[3]);
+        mk('回補提醒',0,cfg.lip[4]); mk('長期回補詢問',0,cfg.lip[5]);
+      }
+    });
+  });
+  return reminders.sort((a,b)=>a.dueDate-b.dueDate);
+}
+
+function renderRemindPage(){
+  const now=dateOnly(new Date());
+  const wEnd=endOfWeek(now);
+  const mEnd=new Date(now.getFullYear(),now.getMonth()+1,0);
+  const all=genReminders();
+  const todayItems  =all.filter(r=>dateOnly(r.dueDate).getTime()===now.getTime());
+  const weekItems   =all.filter(r=>{ const d=dateOnly(r.dueDate); return d>now&&d<=wEnd; });
+  const pendingItems=all.filter(r=>dateOnly(r.dueDate)<now&&!remindedDB[r.key]);
+  const monthItems  =all.filter(r=>{ const d=dateOnly(r.dueDate); return d>wEnd&&d<=mEnd; });
+  document.getElementById('remind-today-date').textContent=fmtDisplay(now);
+  document.getElementById('remind-pending-count').textContent=pendingItems.length+' 筆';
+  const rl=(items,cid,empty)=>{
+    const el=document.getElementById(cid);
+    el.innerHTML=items.length?items.map(reminderItemHtml).join('')
+      :`<div style="color:var(--text3);font-size:12px;padding:6px 0 10px;text-align:center">${empty}</div>`;
+  };
+  rl(todayItems,   'remind-today-list',   '今日無提醒 ✅');
+  rl(weekItems,    'remind-week-list',    '本週（今日以外）無提醒');
+  rl(pendingItems, 'remind-pending-list', '✅ 無未完成提醒');
+  rl(monthItems,   'remind-month-list',   '本月剩餘無其他提醒');
+}
+
+function reminderItemHtml(r){
+  const done=!!remindedDB[r.key];
+  const isPending=dateOnly(r.dueDate)<dateOnly(new Date())&&!done;
+  const svcIcon=(serviceMap[r.svc]||{}).icon||'📌';
+  const borderColor=isPending?'var(--red)':done?'var(--border2)':'var(--accent)';
+  const bgColor=done?'var(--bg2)':isPending?'var(--red-pale)':'var(--card)';
+  return `<div style="background:${bgColor};border:1px solid ${borderColor};border-radius:10px;padding:10px 12px;margin-bottom:8px;${done?'opacity:0.6':''}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${svcIcon} ${r.clientName}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">${r.label}${r.svc!=='生日'?' ｜ 項目：'+r.svc:''}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">📅 ${fmtDisplay(r.dueDate)}${r.phone?' ｜ 📞 '+r.phone:''}</div>
+      </div>
+      <button onclick="toggleReminded('${r.key}')" style="flex-shrink:0;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid ${done?'var(--border2)':'var(--accent)'};background:${done?'var(--bg2)':'var(--accent)'};color:${done?'var(--text3)':'white'};cursor:pointer;white-space:nowrap">
+        ${done?'✅ 已提醒':'○ 未提醒'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function toggleReminded(key){
+  if(remindedDB[key]) delete remindedDB[key]; else remindedDB[key]=true;
+  lsSave(REMINDED_KEY,remindedDB); renderRemindPage();
+}
+
+function saveReminderConfig(){
+  const v=id=>{ const el=document.getElementById(id); return el?parseInt(el.value)||0:0; };
+  cfg.lash=[v('cfg-lash-1'),v('cfg-lash-2'),v('cfg-lash-3')];
+  cfg.brow=[v('cfg-brow-1'),v('cfg-brow-2'),v('cfg-brow-3'),v('cfg-brow-4')];
+  cfg.lip=[v('cfg-lip-1'),v('cfg-lip-2'),v('cfg-lip-3'),v('cfg-lip-4'),v('cfg-lip-5'),v('cfg-lip-6')];
+  lsSave(CFG_KEY,cfg); renderRemindPage();
+  showToast('✅ 提醒設定已儲存並重新計算');
+}
+
+// ══════════════════════════════════════
+// FILTER / TAG / TAB / MODAL / TOAST
+// ══════════════════════════════════════
+function setFilter(btn,label){
+  currentFilter=label;
   document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderClientList();
+  btn.classList.add('active'); renderClientList();
 }
 
-// ══════════════════════════
-// TAG MANAGEMENT
-// ══════════════════════════
-let tagColorIdx = 0;
-function addTag() {
-  const input = document.getElementById('new-tag-input');
-  const val   = input.value.trim();
-  if (!val) return;
-  const color = tagColors[tagColorIdx++ % tagColors.length];
-  const tag   = document.createElement('span');
-  tag.className = `tag ${color}`;
-  tag.innerHTML = `${val} <span class="del" onclick="removeTag(this)">×</span>`;
+let tagColorIdx=0;
+function addTag(){
+  const input=document.getElementById('new-tag-input');
+  const val=input.value.trim(); if(!val) return;
+  const tag=document.createElement('span');
+  tag.className=`tag ${tagColors[tagColorIdx++%tagColors.length]}`;
+  tag.innerHTML=`${val} <span class="del" onclick="removeTag(this)">×</span>`;
   document.getElementById('tag-container').appendChild(tag);
-  input.value = '';
+  input.value='';
 }
-document.addEventListener('keydown', e => {
-  if (e.key==='Enter' && document.activeElement.id==='new-tag-input') addTag();
-});
-function removeTag(el) { el.parentElement.remove(); }
+function removeTag(el){ el.parentElement.remove(); }
 
-// ══════════════════════════
-// SERVICE ITEM TOGGLE
-// ══════════════════════════
-document.addEventListener('click', e => {
-  const item = e.target.closest('.service-item');
-  if (item) item.classList.toggle('selected');
-});
-
-// ══════════════════════════
-// TAB SWITCHING
-// ══════════════════════════
-function switchTab(name, btn) {
+function switchTab(name,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   btn.classList.add('active');
-  document.querySelector('.page-content').scrollTop = 0;
-  if (name==='stats') setTimeout(animateBars, 150);
+  document.querySelector('.page-content').scrollTop=0;
+  if(name==='stats'){ statYear=new Date().getFullYear(); statMonth=new Date().getMonth(); renderStats(); }
+  if(name==='remind') renderRemindPage();
 }
 
-function switchDetailTab(btn, id) {
+function switchDetailTab(btn,id){
   document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el=>el.style.display='none');
-  document.getElementById(id).style.display = 'block';
+  document.getElementById(id).style.display='block';
   btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
 
-function switchCostTab(btn, id) {
+function switchCostTab(btn,id){
   document.querySelectorAll('.cost-section').forEach(s=>s.style.display='none');
-  document.getElementById(id).style.display = 'block';
+  document.getElementById(id).style.display='block';
   btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
 
-// ══════════════════════════
-// MODAL
-// ══════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function closeModalOutside(e, id) {
-  if (e.target.classList.contains('modal-overlay')) closeModal(id);
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e,id){ if(e.target.classList.contains('modal-overlay')) closeModal(id); }
+
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c2820;color:#faf7f2;padding:10px 20px;border-radius:20px;font-size:13px;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.3s;pointer-events:none';
+    document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._timer); t._timer=setTimeout(()=>{ t.style.opacity='0'; },2500);
 }
 
-// ══════════════════════════
-// TOAST
-// ══════════════════════════
-function showToast(msg) {
-  let t = document.getElementById('toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toast';
-    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c2820;color:#faf7f2;padding:10px 20px;border-radius:20px;font-size:13px;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.3s;pointer-events:none';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 2500);
-}
-
-// ══════════════════════════
-// BAR CHART ANIMATION
-// ══════════════════════════
-function animateBars() {
-  document.querySelectorAll('.bar-fill').forEach(bar=>{
-    const w = bar.style.width;
-    bar.style.width = '0';
-    setTimeout(()=>{ bar.style.width=w; }, 80);
-  });
-}
-
-// ══════════════════════════
-// SEARCH
-// ══════════════════════════
-document.getElementById('client-search').addEventListener('input', function() {
-  const q = this.value.trim().toLowerCase();
-  if (!q) { renderClientList(); return; }
-  const listEl = document.getElementById('client-list');
-  const found  = clients.filter(c=>c.name.includes(q)||(c.phone||'').includes(q));
-  document.getElementById('client-count').textContent = '共 '+found.length+' 位';
-  listEl.innerHTML = found.length===0
-    ? `<div class="empty"><div class="empty-icon">🔍</div><p>找不到「${q}」</p></div>`
-    : found.map(clientRowHtml).join('');
+document.getElementById('client-search').addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase(); if(!q){ renderClientList(); return; }
+  const found=clients.filter(c=>c.name.includes(q)||(c.phone||'').includes(q));
+  document.getElementById('client-count').textContent='共 '+found.length+' 位';
+  document.getElementById('client-list').innerHTML=found.length===0
+    ?`<div class="empty"><div class="empty-icon">🔍</div><p>找不到「${q}」</p></div>`
+    :found.map(clientRowHtml).join('');
 });
 
-// ══════════════════════════
-// INIT
-// ══════════════════════════
+function loadCfgInputs(){
+  const s=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v; };
+  s('cfg-lash-1',cfg.lash[0]); s('cfg-lash-2',cfg.lash[1]); s('cfg-lash-3',cfg.lash[2]);
+  s('cfg-brow-1',cfg.brow[0]); s('cfg-brow-2',cfg.brow[1]); s('cfg-brow-3',cfg.brow[2]); s('cfg-brow-4',cfg.brow[3]);
+  s('cfg-lip-1',cfg.lip[0]); s('cfg-lip-2',cfg.lip[1]); s('cfg-lip-3',cfg.lip[2]);
+  s('cfg-lip-4',cfg.lip[3]); s('cfg-lip-5',cfg.lip[4]); s('cfg-lip-6',cfg.lip[5]);
+}
+
+// ── INIT ──
 renderClientList();
-setTimeout(animateBars, 300);
+loadCfgInputs();
 </script>
 
 </body>
