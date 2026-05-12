@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="美業CRM">
+<meta name="theme-color" content="#5b7a6e">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>美業 CRM 管理系統</title>
+<style>
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  /* Pantone 4174U ≈ #5b7a6e (muted teal-green) */
+  --tab-bg: #5b7a6e;
+  --tab-active: #ffffff;
+  --tab-inactive: rgba(255,255,255,0.55);
+
+  /* 米色+象牙白混合 */
+  --bg: #f5f0e8;
+  --bg2: #ede8dc;
+  --card: #faf7f2;
+  --card2: #f2ede3;
+  --border: #ddd5c3;
+  --border2: #cfc6b2;
+
+  /* Text */
+  --text: #2c2820;
+  --text2: #6b6050;
+  --text3: #9a8f7e;
+
+  /* Accent */
+  --accent: #5b7a6e;
+  --accent-light: #8aab9f;
+  --accent-pale: #e0ece8;
+  --red: #c0544a;
+  --red-pale: #fcecea;
+  --amber: #c08a3a;
+  --amber-pale: #fdf3e0;
+  --blue: #4a6e9a;
+  --blue-pale: #e4edf7;
+  --purple: #7a5a9a;
+  --purple-pale: #f0eaf7;
+  --pink: #b05a7a;
+  --pink-pale: #faeaf0;
+
+  --tab-h: 64px;
+  --header-h: 56px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 12px rgba(60,50,35,0.09);
+  --shadow-sm: 0 1px 4px rgba(60,50,35,0.07);
+
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input, select, textarea { font-family: inherit; font-size: 14px; outline: none; }
+a { text-decoration: none; color: inherit; }
+
+/* ── App shell ── */
+#app { display: flex; flex-direction: column; height: 100vh; max-width: 430px; margin: 0 auto; position: relative; background: var(--bg); box-shadow: 0 0 40px rgba(0,0,0,0.12); }
+
+/* ── Header ── */
+.app-header {
+  height: var(--header-h);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+}
+.app-header .logo {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 16px;
+}
+.app-header .title { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
+.app-header .subtitle { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.app-header .header-right { margin-left: auto; display: flex; gap: 8px; }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg2); display: flex; align-items: center; justify-content: center;
+  color: var(--text2); font-size: 18px;
+  transition: background 0.15s;
+}
+.icon-btn:active { background: var(--border); }
+
+/* ── Scrollable content ── */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--tab-h) + 8px);
+}
+.page { display: none; padding: 0; }
+.page.active { display: block; }
+
+/* ── Section header ── */
+.sec-head {
+  padding: 16px 16px 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sec-title { font-size: 13px; font-weight: 600; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+.sec-action { font-size: 12px; color: var(--accent); font-weight: 500; }
+
+/* ── Cards ── */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  margin: 0 12px 10px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title { font-size: 14px; font-weight: 600; }
+.card-body { padding: 12px 14px; }
+
+/* ── Stats row (dashboard style) ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px 12px 0;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.stat-value { font-size: 22px; font-weight: 700; color: var(--text); }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stat-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-top: 4px; font-weight: 500; }
+
+/* ── Tag chips ── */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  border: 1px solid transparent;
+}
+.tag.green  { background: var(--accent-pale); color: var(--accent); border-color: #c2d9d3; }
+.tag.amber  { background: var(--amber-pale);  color: var(--amber);  border-color: #f0d9b0; }
+.tag.red    { background: var(--red-pale);    color: var(--red);    border-color: #f0c8c4; }
+.tag.blue   { background: var(--blue-pale);   color: var(--blue);   border-color: #c0d2e8; }
+.tag.purple { background: var(--purple-pale); color: var(--purple); border-color: #d4c4e8; }
+.tag.pink   { background: var(--pink-pale);   color: var(--pink);   border-color: #e8c4d4; }
+.tag .del { font-size: 14px; line-height: 1; opacity: 0.6; }
+
+/* ── Form elements ── */
+.form-group { margin-bottom: 12px; }
+.form-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; font-weight: 500; }
+.form-input {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.form-input:focus { border-color: var(--accent); background: var(--card); }
+select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a8f7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 18px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500; transition: all 0.15s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:active { background: #4a6a5e; }
+.btn-secondary { background: var(--bg2); color: var(--text2); border: 1px solid var(--border2); }
+.btn-secondary:active { background: var(--border); }
+.btn-danger { background: var(--red-pale); color: var(--red); border: 1px solid #f0c8c4; }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+.btn-xs { padding: 4px 9px; font-size: 11px; border-radius: 5px; }
+.btn-full { width: 100%; }
+
+/* ── List items ── */
+.list-item {
+  display: flex; align-items: center; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px; cursor: pointer;
+  transition: background 0.12s;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item:active { background: var(--bg2); }
+
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent-pale); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0; color: var(--accent); font-weight: 600;
+}
+.li-info { flex: 1; min-width: 0; }
+.li-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.li-sub { font-size: 12px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li-right { text-align: right; flex-shrink: 0; }
+.li-amount { font-size: 14px; font-weight: 600; color: var(--accent); }
+.li-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ── Pill tabs ── */
+.pill-tabs { display: flex; gap: 6px; padding: 12px 12px 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.pill-tabs::-webkit-scrollbar { display: none; }
+.pill-tab {
+  flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 500; border: 1px solid var(--border2);
+  background: var(--card); color: var(--text2); transition: all 0.15s;
+}
+.pill-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ── Service items grid ── */
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.service-item {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.service-item.selected { background: var(--accent-pale); border-color: var(--accent); }
+.service-item .si-icon { font-size: 20px; margin-bottom: 4px; }
+.service-item .si-name { font-size: 13px; font-weight: 500; color: var(--text); }
+
+/* ── Timeline ── */
+.timeline { padding: 0 14px; }
+.tl-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+.tl-item:last-child { border-bottom: none; }
+.tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+.tl-content { flex: 1; }
+.tl-date { font-size: 11px; color: var(--text3); }
+.tl-text { font-size: 13px; color: var(--text); margin-top: 2px; }
+.tl-detail { font-size: 12px; color: var(--text2); margin-top: 3px; background: var(--bg2); border-radius: 6px; padding: 5px 8px; }
+
+/* ── Toggle switch ── */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+.toggle-label { font-size: 13px; color: var(--text); }
+.toggle { position: relative; width: 44px; height: 26px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--border2); border-radius: 26px; transition: 0.2s;
+}
+.toggle-slider::before {
+  position: absolute; content: ""; height: 20px; width: 20px;
+  left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* ── Reminder item ── */
+.remind-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px;
+}
+.remind-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.remind-title { font-size: 13px; font-weight: 600; }
+.remind-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+.remind-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+/* ── Cost table ── */
+.cost-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cost-table th { padding: 8px 10px; text-align: left; font-size: 11px; color: var(--text3); font-weight: 500; border-bottom: 2px solid var(--border2); }
+.cost-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+.cost-table tr:last-child td { border-bottom: none; }
+.cost-table tr:active td { background: var(--bg2); }
+
+/* ── Chart bar ── */
+.bar-chart { padding: 8px 0; }
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.bar-label { font-size: 12px; color: var(--text2); width: 60px; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 10px; background: var(--bg2); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+.bar-val { font-size: 12px; color: var(--text2); width: 50px; flex-shrink: 0; }
+
+/* ── Modal overlay ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(30,25,18,0.45);
+  display: none; align-items: flex-end; justify-content: center;
+  z-index: 100; padding: 0;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card); border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 430px;
+  max-height: 85vh; overflow-y: auto;
+  padding: 0 16px 32px; animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 16px; }
+.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+
+/* ── Bottom Tab Bar ── */
+#tab-bar {
+  height: var(--tab-h);
+  background: var(--tab-bg);
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 -2px 12px rgba(60,50,35,0.15);
+}
+.tab-btn {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding-bottom: 2px;
+  color: var(--tab-inactive);
+  transition: color 0.15s;
+  position: relative;
+}
+.tab-btn.active { color: var(--tab-active); }
+.tab-btn.active::after {
+  content: ''; position: absolute; top: 0; left: 20%; right: 20%;
+  height: 2px; background: white; border-radius: 0 0 2px 2px;
+}
+.tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+.tab-btn .tab-label { font-size: 10px; font-weight: 500; letter-spacing: 0.3px; }
+
+/* ── Empty state ── */
+.empty { text-align: center; padding: 40px 20px; color: var(--text3); }
+.empty .empty-icon { font-size: 40px; margin-bottom: 10px; }
+.empty p { font-size: 13px; }
+
+/* ── Divider ── */
+.divider-line { height: 1px; background: var(--border); margin: 8px 0; }
+
+/* ── Search bar ── */
+.search-bar {
+  margin: 10px 12px 0; display: flex; gap: 8px; align-items: center;
+  background: var(--card); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 8px 12px;
+}
+.search-bar input { flex: 1; background: none; border: none; font-size: 14px; color: var(--text); }
+.search-bar input::placeholder { color: var(--text3); }
+.search-icon { color: var(--text3); font-size: 16px; }
+
+/* ── Inline photo upload ── */
+.photo-upload-area {
+  border: 2px dashed var(--border2); border-radius: var(--radius-sm);
+  padding: 20px; text-align: center; color: var(--text3);
+  background: var(--bg2); cursor: pointer;
+}
+.photo-upload-area:hover { border-color: var(--accent); color: var(--accent); }
+.photo-thumb-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.photo-thumb {
+  width: 72px; height: 72px; border-radius: 8px; object-fit: cover;
+  border: 1px solid var(--border); background: var(--bg2);
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+
+/* ── Pill amount ── */
+.amount-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-pale); border-radius: 10px; padding: 2px 10px; }
+
+/* ── Coupon item ── */
+.coupon { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+.coupon-name { font-size: 13px; font-weight: 500; }
+.coupon-status { font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.coupon-status.used { background: var(--bg2); color: var(--text3); }
+.coupon-status.active { background: var(--accent-pale); color: var(--accent); }
+
+/* ── Location badge ── */
+.loc-badge { font-size: 11px; padding: 2px 8px; border-radius: 5px; font-weight: 500; }
+.loc-tc { background: #e8f0ec; color: #3d6b5e; }
+.loc-tp { background: #e8eef4; color: #3d5a7a; }
+
+/* ── Utility ── */
+.mt4 { margin-top: 4px; }
+.mt8 { margin-top: 8px; }
+.mt12 { margin-top: 12px; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.text-accent { color: var(--accent); }
+.text-muted { color: var(--text3); font-size: 12px; }
+.fw6 { font-weight: 600; }
+.fs12 { font-size: 12px; }
+.fs13 { font-size: 13px; }
+.fs14 { font-size: 14px; }
+.gap6 { gap: 6px; }
+.px12 { padding-left: 12px; padding-right: 12px; }
+
+/* ── Safe area (iPhone notch) ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  #tab-bar { padding-bottom: env(safe-area-inset-bottom); height: calc(var(--tab-h) + env(safe-area-inset-bottom)); }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── HEADER ── -->
+  <div class="app-header">
+    <div class="logo">✦</div>
+    <div>
+      <div class="title">美業 CRM</div>
+      <div class="subtitle">Beauty Studio Manager</div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" onclick="openModal('modal-search')">🔍</button>
+      <button class="icon-btn" onclick="openModal('modal-add-client')">＋</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGES
+  ══════════════════════════════════════ -->
+  <div class="page-content">
+
+    <!-- ▶ PAGE 1：客戶資料 -->
+    <div class="page active" id="page-client">
+
+      <!-- 搜尋列 -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜尋客戶姓名・電話…">
+      </div>
+
+      <!-- 快速篩選 -->
+      <div class="pill-tabs">
+        <button class="pill-tab active">全部</button>
+        <button class="pill-tab">😴 睫毛</button>
+        <button class="pill-tab">✏️ 眉毛</button>
+        <button class="pill-tab">💋 霧唇</button>
+        <button class="pill-tab">💜 髮際線</button>
+        <button class="pill-tab">🗑 除色</button>
+      </div>
+
+      <!-- 客戶列表 -->
+      <div class="sec-head">
+        <span class="sec-title">客戶列表</span>
+        <span class="sec-action">共 3 位</span>
+      </div>
+
+      <div class="card">
+        <div class="list-item" onclick="openClientDetail('A')">
+          <div class="avatar">小</div>
+          <div class="li-info">
+            <div class="flex-between">
+              <span class="li-name">小美</span>
+              <span class="loc-badge loc-tc">台中</span>
+            </div>
+            <div class="li-sub">😴 睫毛・✏️ 眉毛 ｜ 0912-345-678</div>
+            <div class="tag-row mt4">
+              <span class="tag green">💡 開燈</span>
+              <span class="tag amber">⏱ 趕時間</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-item" onclick="openClientDetail('B')">
+          <div class="avatar">佳</div>
+          <div class="li-info">
+            <div class="flex-between">
+              <span class="li-name">佳琪</span>
+              <span class="loc-badge loc-tp">台北</span>
+            </div>
+            <div class="li-sub">💋 霧唇 ｜ 0923-456-789</div>
+            <div class="tag-row mt4">
+              <span class="tag red">🤫 不貼膠帶</span>
+              <span class="tag blue">😊 愛聊天</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-item" onclick="openClientDetail('C')">
+          <div class="avatar">雅</div>
+          <div class="li-info">
+            <div class="flex-between">
+              <span class="li-name">雅雯</span>
+              <span class="loc-badge loc-tc">台中</span>
+            </div>
+            <div class="li-sub">💜 髮際線・😴 睫毛 ｜ 0934-567-890</div>
+            <div class="tag-row mt4">
+              <span class="tag purple">🌸 怕痛</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快速統計 -->
+      <div class="sec-head"><span class="sec-title">本月摘要</span></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">總客戶數</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">台中 2・台北 1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">已施作項目</div>
+          <div class="stat-value">7</div>
+          <div class="stat-sub">本月累計</div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <!-- ▶ END PAGE 1 -->
+
+    <!-- ▶ PAGE 2：提醒 -->
+    <div class="page" id="page-remind">
+
+      <div class="sec-head"><span class="sec-title">即時提醒</span></div>
+      <div class="px12">
+        <div class="remind-item">
+          <div class="remind-header">
+            <span class="remind-title">🔔 預約成功通知</span>
+            <span class="remind-badge" style="background:var(--accent-pale);color:var(--accent)">自動</span>
+          </div>
+          <div class="remind-desc">預約完成後立即發送 LINE 確認訊息（日期・時間・服務項目）</div>
+        </div>
+        <div class="remind-item">
+          <div class="remind-header">
+            <span class="remind-title">⏰ 前兩天提醒</span>
+            <span class="remind-badge" style="background:var(--amber-pale);color:var(--amber)">排程</span>
+          </div>
+          <div class="remind-desc">預約前 2 天自動發送提醒，降低 No-show 率</div>
+        </div>
+      </div>
+
+      <div class="sec-head"><span class="sec-title">🎂 生日祝福</span></div>
+      <div class="px12">
+        <div class="remind-item">
+          <div class="remind-header">
+            <span class="remind-title">生日當月祝福</span>
+            <span class="remind-badge" style="background:var(--pink-pale);color:var(--pink)">自動</span>
+          </div>
+          <div class="remind-desc">客戶生日當月自動發送祝賀 + 優惠券（可設定券別）</div>
+        </div>
+      </div>
+
+      <div class="sec-head"><span class="sec-title">📆 回訪提醒設定</span></div>
+      <div class="px12">
+
+        <!-- 睫毛 -->
+        <div class="card" style="margin:0 0 10px">
+          <div class="card-header" style="background:var(--accent-pale)">
+            <span style="font-size:18px">😴</span>
+            <span class="card-title text-accent">睫毛</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">第一次關心</label>
+              <select class="form-input">
+                <option>施作後 5 天</option><option>施作後 3 天</option><option>施作後 7 天</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">三週回補提醒</label>
+              <select class="form-input">
+                <option>施作後 17 天</option><option>施作後 14 天</option><option>施作後 21 天</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">長期回訪詢問</label>
+              <select class="form-input">
+                <option>施作後 3 個月</option><option>施作後 2 個月</option><option>施作後 4 個月</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 眉毛 -->
+        <div class="card" style="margin:0 0 10px">
+          <div class="card-header" style="background:#f0eaf7">
+            <span style="font-size:18px">✏️</span>
+            <span class="card-title" style="color:var(--purple)">眉毛</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">第一次關心</label>
+              <select class="form-input"><option>施作後 2 週</option><option>施作後 10 天</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">照片回傳提醒</label>
+              <select class="form-input"><option>施作後 1 個月</option><option>施作後 3 週</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">回補提醒</label>
+              <select class="form-input"><option>施作後 3 個月</option><option>施作後 2 個月</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">長期回補詢問</label>
+              <select class="form-input"><option>施作後 10 個月</option><option>施作後 8 個月</option></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 霧唇 / 髮際線 -->
+        <div class="card" style="margin:0 0 10px">
+          <div class="card-header" style="background:var(--pink-pale)">
+            <span style="font-size:18px">💋</span>
+            <span class="card-title" style="color:var(--pink)">霧唇 ／ 髮際線</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">照片回傳（多次）</label>
+              <select class="form-input"><option>施作後 2 天</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">照片回傳（第二次）</label>
+              <select class="form-input"><option>施作後 4 天</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">照片回傳（第三次）</label>
+              <select class="form-input"><option>施作後 8 天</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">照片回傳（第四次）</label>
+              <select class="form-input"><option>施作後 10 天</option></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">回補提醒</label>
+              <select class="form-input"><option>施作後 3 個月</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">長期回補詢問</label>
+              <select class="form-input"><option>施作後 10 個月</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <!-- ▶ END PAGE 2 -->
+
+    <!-- ▶ PAGE 3：預約 -->
+    <div class="page" id="page-booking">
+
+      <div class="sec-head"><span class="sec-title">預約總覽</span></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">本週預約</div>
+          <div class="stat-value">4</div>
+          <div class="stat-sub">台中 3・台北 1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">今日</div>
+          <div class="stat-value">2</div>
+          <div class="stat-sub">下午 2:00 / 5:00</div>
+        </div>
+      </div>
+
+      <!-- 今日行程 -->
+      <div class="sec-head"><span class="sec-title">今日行程</span><span class="sec-action">5月12日</span></div>
+      <div class="card">
+        <div class="list-item">
+          <div style="text-align:center; width:42px; flex-shrink:0">
+            <div style="font-size:13px;font-weight:700;color:var(--accent)">14:00</div>
+            <div style="font-size:10px;color:var(--text3)">90 min</div>
+          </div>
+          <div class="li-info">
+            <div class="li-name">小美</div>
+            <div class="li-sub">😴 睫毛嫁接 · 台中</div>
+          </div>
+          <span class="tag green">確認</span>
+        </div>
+        <div class="list-item">
+          <div style="text-align:center; width:42px; flex-shrink:0">
+            <div style="font-size:13px;font-weight:700;color:var(--accent)">17:00</div>
+            <div style="font-size:10px;color:var(--text3)">120 min</div>
+          </div>
+          <div class="li-info">
+            <div class="li-name">佳琪</div>
+            <div class="li-sub">💋 霧唇 · 台北</div>
+          </div>
+          <span class="tag amber">待確認</span>
+        </div>
+      </div>
+
+      <!-- 預約連結說明 -->
+      <div class="sec-head"><span class="sec-title">外部連結整合</span></div>
+      <div class="card">
+        <div class="card-body">
+          <div class="toggle-row">
+            <div>
+              <div class="fs13 fw6">🗓 TimeTree 行事曆</div>
+              <div class="text-muted mt4">手動同步至 TimeTree 共享日曆</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="divider-line"></div>
+          <div class="toggle-row">
+            <div>
+              <div class="fs13 fw6">💬 LINE 官方帳號</div>
+              <div class="text-muted mt4">發送提醒與確認訊息至客戶 LINE</div>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="divider-line"></div>
+          <div style="background:var(--amber-pale);border-radius:8px;padding:10px 12px;margin-top:8px;">
+            <div class="fs12 fw6" style="color:var(--amber)">📌 自動接單功能</div>
+            <div class="text-muted mt4">目前使用人工確認預約模式。日後可開啟 24h 自動接單功能。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 新增預約 -->
+      <div class="px12 mt8">
+        <button class="btn btn-primary btn-full" onclick="openModal('modal-add-booking')">＋ 新增手動預約</button>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <!-- ▶ END PAGE 3 -->
+
+    <!-- ▶ PAGE 4：成本 -->
+    <div class="page" id="page-cost">
+
+      <div class="sec-head"><span class="sec-title">本月收入</span><span class="sec-action">2025年5月</span></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">台中收入</div>
+          <div class="stat-value" style="font-size:18px">$28,500</div>
+          <div class="stat-sub">12 筆</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">台北收入</div>
+          <div class="stat-value" style="font-size:18px">$14,200</div>
+          <div class="stat-sub">6 筆</div>
+        </div>
+      </div>
+
+      <!-- 服務項目分類 -->
+      <div class="sec-head"><span class="sec-title">服務項目收入</span></div>
+      <div class="pill-tabs">
+        <button class="pill-tab active" onclick="switchCostTab(this,'cost-lash')">😴 睫毛</button>
+        <button class="pill-tab" onclick="switchCostTab(this,'cost-brow')">✏️ 眉毛</button>
+        <button class="pill-tab" onclick="switchCostTab(this,'cost-lip')">💋 霧唇</button>
+        <button class="pill-tab" onclick="switchCostTab(this,'cost-hair')">💜 髮際線</button>
+        <button class="pill-tab" onclick="switchCostTab(this,'cost-remove')">🗑 除色</button>
+      </div>
+
+      <!-- 睫毛收入表格 -->
+      <div id="cost-lash" class="cost-section">
+        <div class="card" style="margin-top:8px">
+          <div class="card-header">
+            <span style="font-size:16px">😴</span>
+            <span class="card-title">睫毛 收費紀錄</span>
+            <button class="btn btn-primary btn-xs" style="margin-left:auto" onclick="openModal('modal-add-cost')">＋ 新增</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="cost-table">
+              <tr><th>項目名稱</th><th>日期</th><th>金額</th><th>管道</th></tr>
+              <tr><td>睫毛嫁接</td><td>05/10</td><td>$3,800</td><td><span class="tag green fs12" style="padding:2px 8px">現金</span></td></tr>
+              <tr><td>睫毛回補</td><td>05/08</td><td>$1,800</td><td><span class="tag blue fs12" style="padding:2px 8px">轉帳</span></td></tr>
+              <tr><td>睫毛嫁接</td><td>05/05</td><td>$4,200</td><td><span class="tag amber fs12" style="padding:2px 8px">LINE Pay</span></td></tr>
+            </table>
+          </div>
+          <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span class="text-muted">本月小計</span>
+            <span class="amount-pill">$9,800</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="cost-brow" class="cost-section" style="display:none">
+        <div class="card" style="margin-top:8px">
+          <div class="card-header"><span style="font-size:16px">✏️</span><span class="card-title">眉毛 收費紀錄</span><button class="btn btn-primary btn-xs" style="margin-left:auto">＋ 新增</button></div>
+          <div style="overflow-x:auto"><table class="cost-table"><tr><th>項目名稱</th><th>日期</th><th>金額</th><th>管道</th></tr><tr><td>霧眉</td><td>05/09</td><td>$8,000</td><td><span class="tag green fs12" style="padding:2px 8px">現金</span></td></tr></table></div>
+          <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><span class="text-muted">本月小計</span><span class="amount-pill">$8,000</span></div>
+        </div>
+      </div>
+      <div id="cost-lip" class="cost-section" style="display:none">
+        <div class="card" style="margin-top:8px"><div class="card-header"><span style="font-size:16px">💋</span><span class="card-title">霧唇 收費紀錄</span><button class="btn btn-primary btn-xs" style="margin-left:auto">＋ 新增</button></div><div style="padding:30px;text-align:center;color:var(--text3)">尚無紀錄</div></div>
+      </div>
+      <div id="cost-hair" class="cost-section" style="display:none">
+        <div class="card" style="margin-top:8px"><div class="card-header"><span style="font-size:16px">💜</span><span class="card-title">髮際線 收費紀錄</span><button class="btn btn-primary btn-xs" style="margin-left:auto">＋ 新增</button></div><div style="padding:30px;text-align:center;color:var(--text3)">尚無紀錄</div></div>
+      </div>
+      <div id="cost-remove" class="cost-section" style="display:none">
+        <div class="card" style="margin-top:8px"><div class="card-header"><span style="font-size:16px">🗑</span><span class="card-title">除色 收費紀錄</span><button class="btn btn-primary btn-xs" style="margin-left:auto">＋ 新增</button></div><div style="padding:30px;text-align:center;color:var(--text3)">尚無紀錄</div></div>
+      </div>
+
+      <!-- 小票盒提示 -->
+      <div class="px12 mt8">
+        <div style="background:var(--blue-pale);border-radius:10px;padding:12px 14px;border:1px solid #c0d2e8">
+          <div class="fs13 fw6" style="color:var(--blue)">🧾 小票盒連結</div>
+          <div class="text-muted mt4" style="line-height:1.6">目前小票盒（PayEasy/iCHEF等）尚無開放直接 API 串接。建議方案：<br>① 每月匯出 CSV 後匯入本系統<br>② 或請技術協助建立 Webhook 自動同步</div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <!-- ▶ END PAGE 4 -->
+
+    <!-- ▶ PAGE 5：統計 -->
+    <div class="page" id="page-stats">
+
+      <div class="sec-head"><span class="sec-title">營業收入</span><span class="sec-action">2025年5月</span></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">台中收入</div>
+          <div class="stat-value" style="font-size:18px;color:var(--accent)">$28,500</div>
+          <div class="stat-sub">↑ 較上月 +12%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">台北收入</div>
+          <div class="stat-value" style="font-size:18px;color:var(--blue)">$14,200</div>
+          <div class="stat-sub">↑ 較上月 +5%</div>
+        </div>
+      </div>
+
+      <!-- 服務項目分析 -->
+      <div class="sec-head"><span class="sec-title">服務項目佔比</span></div>
+      <div class="card">
+        <div class="card-body">
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-label">😴 睫毛</span>
+              <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--accent)"></div></div>
+              <span class="bar-val">$9,800</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">✏️ 眉毛</span>
+              <div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--purple)"></div></div>
+              <span class="bar-val">$8,000</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">💋 霧唇</span>
+              <div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--pink)"></div></div>
+              <span class="bar-val">$5,700</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">💜 髮際線</span>
+              <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--blue)"></div></div>
+              <span class="bar-val">$4,200</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">🗑 除色</span>
+              <div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--amber)"></div></div>
+              <span class="bar-val">$1,800</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 回訪率 + 流失預警 同一頁 -->
+      <div class="sec-head"><span class="sec-title">回訪率 ／ 流失預警</span></div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">回訪率</div>
+          <div class="stat-value" style="color:var(--accent)">74%</div>
+          <div class="stat-sub">本月回流客</div>
+          <span class="stat-badge" style="background:var(--accent-pale);color:var(--accent)">良好</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">流失預警</div>
+          <div class="stat-value" style="color:var(--red)">2</div>
+          <div class="stat-sub">超過週期未回</div>
+          <span class="stat-badge" style="background:var(--red-pale);color:var(--red)">需追蹤</span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:8px">
+        <div class="card-body">
+          <div class="fs12 fw6" style="color:var(--red);margin-bottom:8px">⚠️ 流失預警名單</div>
+          <div class="flex-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
+            <div><div class="fs13 fw6">小美</div><div class="text-muted">睫毛 · 已過 25 天未回補</div></div>
+            <button class="btn btn-secondary btn-xs">提醒</button>
+          </div>
+          <div class="flex-between" style="padding:8px 0">
+            <div><div class="fs13 fw6">雅雯</div><div class="text-muted">眉毛 · 已過 4 個月</div></div>
+            <button class="btn btn-secondary btn-xs">提醒</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 來源追蹤 -->
+      <div class="sec-head"><span class="sec-title">來源追蹤</span></div>
+      <div class="card">
+        <div class="card-body">
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-label" style="width:70px">👥 客戶轉介</span>
+              <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div>
+              <span class="bar-val">60%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label" style="width:70px">🌟 KOL 分享</span>
+              <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--pink)"></div></div>
+              <span class="bar-val">25%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label" style="width:70px">🔍 Google</span>
+              <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--blue)"></div></div>
+              <span class="bar-val">15%</span>
+            </div>
+          </div>
+          <div class="divider-line"></div>
+          <div class="flex-between">
+            <span class="fs12 fw6">客戶轉介紹效益</span>
+            <span class="amount-pill">$25,400</span>
+          </div>
+          <div class="flex-between mt8">
+            <span class="fs12 fw6">KOL 分享效益</span>
+            <span style="font-size:13px;font-weight:600;color:var(--pink);background:var(--pink-pale);border-radius:10px;padding:2px 10px;">$10,600</span>
+          </div>
+          <div class="flex-between mt8">
+            <span class="fs12 fw6">Google 自來客</span>
+            <span style="font-size:13px;font-weight:600;color:var(--blue);background:var(--blue-pale);border-radius:10px;padding:2px 10px;">$6,700</span>
+          </div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+    <!-- ▶ END PAGE 5 -->
+
+  </div>
+  <!-- END page-content -->
+
+  <!-- ══════════════════════════════════════
+       BOTTOM TAB BAR
+  ══════════════════════════════════════ -->
+  <div id="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('client',this)">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">客戶資料</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('remind',this)">
+      <span class="tab-icon">🔔</span>
+      <span class="tab-label">提醒</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('booking',this)">
+      <span class="tab-icon">📅</span>
+      <span class="tab-label">預約</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('cost',this)">
+      <span class="tab-icon">💰</span>
+      <span class="tab-label">成本</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('stats',this)">
+      <span class="tab-icon">📊</span>
+      <span class="tab-label">統計</span>
+    </button>
+  </div>
+
+</div><!-- end #app -->
+
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- 客戶詳細資料 Modal -->
+<div class="modal-overlay" id="modal-client-detail" onclick="closeModalOutside(event,'modal-client-detail')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="flex-between">
+      <div class="modal-title">客戶資料</div>
+      <button class="btn btn-secondary btn-xs" onclick="closeModal('modal-client-detail')">關閉</button>
+    </div>
+
+    <!-- Tab 切換 -->
+    <div class="pill-tabs" style="padding:0 0 12px;margin:0 -4px">
+      <button class="pill-tab active" onclick="switchDetailTab(this,'dt-basic')">基本</button>
+      <button class="pill-tab" onclick="switchDetailTab(this,'dt-record')">施作紀錄</button>
+      <button class="pill-tab" onclick="switchDetailTab(this,'dt-coupon')">優惠</button>
+      <button class="pill-tab" onclick="switchDetailTab(this,'dt-photo')">照片</button>
+      <button class="pill-tab" onclick="switchDetailTab(this,'dt-consent')">同意書</button>
+    </div>
+
+    <!-- 基本資料 -->
+    <div id="dt-basic">
+      <div class="form-group">
+        <label class="form-label">姓名</label>
+        <input class="form-input" value="小美">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group">
+          <label class="form-label">性別</label>
+          <select class="form-input"><option>女</option><option>男</option><option>其他</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">年紀</label>
+          <input class="form-input" type="number" value="28">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">電話</label>
+        <input class="form-input" type="tel" value="0912-345-678">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-group">
+          <label class="form-label">施作地點</label>
+          <select class="form-input"><option>台中</option><option>台北</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">來源</label>
+          <select class="form-input"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">人物備註</label>
+        <textarea class="form-input" rows="2" placeholder="特別注意事項…">很準時，喜歡聊天，貓咪過敏不可使用動物蛋白</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">已施作項目</label>
+        <div class="service-grid mt4">
+          <div class="service-item selected"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
+          <div class="service-item selected"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
+          <div class="service-item"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
+          <div class="service-item"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
+          <div class="service-item" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">個人標籤</label>
+        <div class="tag-row" id="tag-container">
+          <span class="tag green">💡 開燈 <span class="del" onclick="removeTag(this)">×</span></span>
+          <span class="tag amber">⏱ 趕時間 <span class="del" onclick="removeTag(this)">×</span></span>
+          <span class="tag red">🤫 不貼膠帶 <span class="del" onclick="removeTag(this)">×</span></span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <input class="form-input" id="new-tag-input" placeholder="新增標籤…" style="flex:1">
+          <button class="btn btn-secondary btn-sm" onclick="addTag()">＋ 新增</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full">儲存資料</button>
+    </div>
+
+    <!-- 施作紀錄 -->
+    <div id="dt-record" style="display:none">
+      <!-- 項目選擇 -->
+      <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
+        <button class="pill-tab active">😴 睫毛</button>
+        <button class="pill-tab">✏️ 眉毛</button>
+        <button class="pill-tab">💋 霧唇</button>
+        <button class="pill-tab">💜 髮際線</button>
+        <button class="pill-tab">🗑 除色</button>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date">2025-05-10</div>
+            <div class="tl-text fw6">睫毛嫁接 ｜ $3,800</div>
+            <div class="tl-detail">針具：12mm 0.10J型｜色號：深棕｜備註：下眼瞼較薄，注意膠水用量</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent-light)"></div>
+          <div class="tl-content">
+            <div class="tl-date">2025-04-15</div>
+            <div class="tl-text fw6">睫毛回補 ｜ $1,800</div>
+            <div class="tl-detail">針具：10mm｜色號：深棕｜備註：回補量約50%</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openModal('modal-add-record')">＋ 新增施作紀錄</button>
+    </div>
+
+    <!-- 使用優惠 -->
+    <div id="dt-coupon" style="display:none">
+      <div class="fs13 fw6" style="margin-bottom:10px">優惠使用紀錄</div>
+      <div class="coupon">
+        <div><div class="coupon-name">🎂 生日優惠 9折</div><div class="text-muted">2025-01-15 發放</div></div>
+        <span class="coupon-status active">未使用</span>
+      </div>
+      <div class="coupon">
+        <div><div class="coupon-name">👫 同行優惠 $200 折</div><div class="text-muted">2024-12-01 發放</div></div>
+        <span class="coupon-status used">已使用</span>
+      </div>
+      <div class="coupon">
+        <div><div class="coupon-name">💌 介紹朋友回饋金 $300</div><div class="text-muted">2024-11-20 發放</div></div>
+        <span class="coupon-status used">已使用</span>
+      </div>
+      <button class="btn btn-secondary btn-full" style="margin-top:10px" onclick="openModal('modal-add-coupon')">＋ 新增優惠</button>
+    </div>
+
+    <!-- 施作照片 -->
+    <div id="dt-photo" style="display:none">
+      <div class="photo-thumb-row">
+        <div class="photo-thumb">📷</div>
+        <div class="photo-thumb">📷</div>
+        <div class="photo-thumb">📷</div>
+      </div>
+      <div class="photo-upload-area mt8">
+        <input type="file" accept="image/*" multiple style="display:none" id="photo-upload">
+        <div onclick="document.getElementById('photo-upload').click()">
+          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          <div class="fs13">點擊上傳施作照片</div>
+          <div class="text-muted mt4">支援 JPG・PNG・HEIC</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 同意書 -->
+    <div id="dt-consent" style="display:none">
+      <div class="fs13 fw6" style="margin-bottom:12px">施作前同意書 ／ 問卷連結</div>
+      <div class="remind-item">
+        <div class="remind-header">
+          <span class="remind-title">😴 睫毛同意書</span>
+          <span class="remind-badge" style="background:var(--accent-pale);color:var(--accent)">已簽署</span>
+        </div>
+        <a href="#" style="font-size:12px;color:var(--accent)">📋 Google 表單連結 →</a>
+      </div>
+      <div class="remind-item">
+        <div class="remind-header">
+          <span class="remind-title">✏️ 眉毛同意書</span>
+          <span class="remind-badge" style="background:var(--border);color:var(--text3)">未簽署</span>
+        </div>
+        <a href="#" style="font-size:12px;color:var(--accent)">📋 Google 表單連結 →</a>
+      </div>
+      <div class="remind-item">
+        <div class="remind-header">
+          <span class="remind-title">💋 霧唇同意書</span>
+          <span class="remind-badge" style="background:var(--border);color:var(--text3)">未簽署</span>
+        </div>
+        <a href="#" style="font-size:12px;color:var(--accent)">📋 Google 表單連結 →</a>
+      </div>
+      <div class="remind-item">
+        <div class="remind-header">
+          <span class="remind-title">💜 髮際線同意書</span>
+          <span class="remind-badge" style="background:var(--border);color:var(--text3)">未簽署</span>
+        </div>
+        <a href="#" style="font-size:12px;color:var(--accent)">📋 Google 表單連結 →</a>
+      </div>
+      <div style="background:var(--bg2);border-radius:8px;padding:10px 12px;margin-top:8px;">
+        <div class="fs12 fw6" style="color:var(--text2)">📌 設定方式</div>
+        <div class="text-muted mt4">前往「設定 → 同意書連結」貼入各項目的 Google 表單網址，系統將自動帶入此處供客戶點選填寫。</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 新增施作紀錄 Modal -->
+<div class="modal-overlay" id="modal-add-record" onclick="closeModalOutside(event,'modal-add-record')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增施作紀錄</div>
+    <div class="form-group">
+      <label class="form-label">施作項目</label>
+      <div class="service-grid">
+        <div class="service-item selected"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
+        <div class="service-item"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
+        <div class="service-item"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
+        <div class="service-item"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
+        <div class="service-item" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">施作日期</label>
+      <input class="form-input" type="date">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group">
+        <label class="form-label">針具規格</label>
+        <input class="form-input" placeholder="12mm 0.10J">
+      </div>
+      <div class="form-group">
+        <label class="form-label">色號</label>
+        <input class="form-input" placeholder="深棕">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">消費金額 (NT$)</label>
+      <input class="form-input" type="number" placeholder="3800">
+    </div>
+    <div class="form-group">
+      <label class="form-label">施作備註</label>
+      <textarea class="form-input" rows="3" placeholder="注意事項・特殊情況…"></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-record')">取消</button>
+      <button class="btn btn-primary" style="flex:2">儲存紀錄</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增客戶 Modal -->
+<div class="modal-overlay" id="modal-add-client" onclick="closeModalOutside(event,'modal-add-client')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增客戶</div>
+    <div class="form-group"><label class="form-label">姓名</label><input class="form-input" placeholder="客戶姓名"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">性別</label><select class="form-input"><option>女</option><option>男</option><option>其他</option></select></div>
+      <div class="form-group"><label class="form-label">年紀</label><input class="form-input" type="number" placeholder="25"></div>
+    </div>
+    <div class="form-group"><label class="form-label">電話</label><input class="form-input" type="tel" placeholder="09xx-xxx-xxx"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">施作地點</label><select class="form-input"><option>台中</option><option>台北</option></select></div>
+      <div class="form-group"><label class="form-label">來源</label><select class="form-input"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">人物備註</label><textarea class="form-input" rows="2" placeholder="特別注意事項…"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-client')">取消</button>
+      <button class="btn btn-primary" style="flex:2">建立客戶</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增成本 Modal -->
+<div class="modal-overlay" id="modal-add-cost" onclick="closeModalOutside(event,'modal-add-cost')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增收費紀錄</div>
+    <div class="form-group"><label class="form-label">項目名稱</label><input class="form-input" placeholder="睫毛嫁接"></div>
+    <div class="form-group"><label class="form-label">日期</label><input class="form-input" type="date"></div>
+    <div class="form-group"><label class="form-label">金額 (NT$)</label><input class="form-input" type="number" placeholder="3800"></div>
+    <div class="form-group"><label class="form-label">付款管道</label><select class="form-input"><option>現金</option><option>轉帳</option><option>LINE Pay</option><option>信用卡</option></select></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-cost')">取消</button>
+      <button class="btn btn-primary" style="flex:2">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增預約 Modal -->
+<div class="modal-overlay" id="modal-add-booking" onclick="closeModalOutside(event,'modal-add-booking')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增預約</div>
+    <div class="form-group"><label class="form-label">客戶</label><select class="form-input"><option>小美</option><option>佳琪</option><option>雅雯</option></select></div>
+    <div class="form-group"><label class="form-label">服務項目</label><select class="form-input"><option>睫毛嫁接</option><option>睫毛回補</option><option>霧眉</option><option>眉毛回補</option><option>霧唇</option><option>髮際線</option><option>除色</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">預約日期</label><input class="form-input" type="date"></div>
+      <div class="form-group"><label class="form-label">時間</label><input class="form-input" type="time"></div>
+    </div>
+    <div class="form-group"><label class="form-label">施作地點</label><select class="form-input"><option>台中</option><option>台北</option></select></div>
+    <div class="form-group"><label class="form-label">備註</label><textarea class="form-input" rows="2" placeholder="特殊需求…"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-booking')">取消</button>
+      <button class="btn btn-primary" style="flex:2">確認預約</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增優惠 Modal -->
+<div class="modal-overlay" id="modal-add-coupon" onclick="closeModalOutside(event,'modal-add-coupon')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">新增優惠</div>
+    <div class="form-group"><label class="form-label">優惠類型</label>
+      <select class="form-input">
+        <option>介紹朋友回饋金</option><option>同行優惠</option><option>生日優惠</option><option>自訂優惠</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">優惠說明</label><input class="form-input" placeholder="$300 回饋金 / 9折…"></div>
+    <div class="form-group"><label class="form-label">發放日期</label><input class="form-input" type="date"></div>
+    <div class="form-group"><label class="form-label">有效期限</label><input class="form-input" type="date"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-coupon')">取消</button>
+      <button class="btn btn-primary" style="flex:2">新增</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+// ── Tab switching ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelector('.page-content').scrollTop = 0;
+}
+
+// ── Open client detail ──
+function openClientDetail(id) {
+  openModal('modal-client-detail');
+}
+
+// ── Detail tab switching ──
+function switchDetailTab(btn, id) {
+  document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Cost tab switching ──
+function switchCostTab(btn, id) {
+  document.querySelectorAll('.cost-section').forEach(s => s.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Tag management ──
+const tagColors = ['green','amber','red','blue','purple','pink'];
+let tagColorIdx = 0;
+function addTag() {
+  const input = document.getElementById('new-tag-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const color = tagColors[tagColorIdx % tagColors.length];
+  tagColorIdx++;
+  const tag = document.createElement('span');
+  tag.className = `tag ${color}`;
+  tag.innerHTML = `${val} <span class="del" onclick="removeTag(this)">×</span>`;
+  document.getElementById('tag-container').appendChild(tag);
+  input.value = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.id === 'new-tag-input') addTag();
+});
+function removeTag(el) { el.parentElement.remove(); }
+
+// ── Service item toggle ──
+document.querySelectorAll('.service-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('selected'));
+});
+
+// ── Modal ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function closeModalOutside(e, id) {
+  if (e.target.classList.contains('modal-overlay')) closeModal(id);
+}
+
+// ── Animate bars on stats page ──
+function animateBars() {
+  document.querySelectorAll('.bar-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(() => { bar.style.width = w; }, 100);
+  });
+}
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTimeout(animateBars, 100);
+  });
+});
+</script>
+
+</body>
+</html>
