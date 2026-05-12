@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -427,78 +428,34 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <!-- 搜尋列 -->
       <div class="search-bar">
         <span class="search-icon">🔍</span>
-        <input type="text" placeholder="搜尋客戶姓名・電話…">
+        <input type="text" id="client-search" placeholder="搜尋客戶姓名・電話…">
       </div>
 
       <!-- 快速篩選 -->
       <div class="pill-tabs">
-        <button class="pill-tab active">全部</button>
-        <button class="pill-tab">😴 睫毛</button>
-        <button class="pill-tab">✏️ 眉毛</button>
-        <button class="pill-tab">💋 霧唇</button>
-        <button class="pill-tab">💜 髮際線</button>
-        <button class="pill-tab">🗑 除色</button>
+        <button class="pill-tab filter-pill active" onclick="setFilter(this,'全部')">全部</button>
+        <button class="pill-tab filter-pill" onclick="setFilter(this,'睫毛')">😴 睫毛</button>
+        <button class="pill-tab filter-pill" onclick="setFilter(this,'眉毛')">✏️ 眉毛</button>
+        <button class="pill-tab filter-pill" onclick="setFilter(this,'霧唇')">💋 霧唇</button>
+        <button class="pill-tab filter-pill" onclick="setFilter(this,'髮際線')">💜 髮際線</button>
+        <button class="pill-tab filter-pill" onclick="setFilter(this,'除色')">🗑 除色</button>
       </div>
 
-      <!-- 客戶列表 -->
+      <!-- 客戶列表（動態渲染） -->
       <div class="sec-head">
         <span class="sec-title">客戶列表</span>
-        <span class="sec-action">共 3 位</span>
+        <span class="sec-action" id="client-count">載入中…</span>
       </div>
 
-      <div class="card">
-        <div class="list-item" onclick="openClientDetail('A')">
-          <div class="avatar">小</div>
-          <div class="li-info">
-            <div class="flex-between">
-              <span class="li-name">小美</span>
-              <span class="loc-badge loc-tc">台中</span>
-            </div>
-            <div class="li-sub">😴 睫毛・✏️ 眉毛 ｜ 0912-345-678</div>
-            <div class="tag-row mt4">
-              <span class="tag green">💡 開燈</span>
-              <span class="tag amber">⏱ 趕時間</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-item" onclick="openClientDetail('B')">
-          <div class="avatar">佳</div>
-          <div class="li-info">
-            <div class="flex-between">
-              <span class="li-name">佳琪</span>
-              <span class="loc-badge loc-tp">台北</span>
-            </div>
-            <div class="li-sub">💋 霧唇 ｜ 0923-456-789</div>
-            <div class="tag-row mt4">
-              <span class="tag red">🤫 不貼膠帶</span>
-              <span class="tag blue">😊 愛聊天</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-item" onclick="openClientDetail('C')">
-          <div class="avatar">雅</div>
-          <div class="li-info">
-            <div class="flex-between">
-              <span class="li-name">雅雯</span>
-              <span class="loc-badge loc-tc">台中</span>
-            </div>
-            <div class="li-sub">💜 髮際線・😴 睫毛 ｜ 0934-567-890</div>
-            <div class="tag-row mt4">
-              <span class="tag purple">🌸 怕痛</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="card" id="client-list"></div>
 
       <!-- 快速統計 -->
       <div class="sec-head"><span class="sec-title">本月摘要</span></div>
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-label">總客戶數</div>
-          <div class="stat-value">3</div>
-          <div class="stat-sub">台中 2・台北 1</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub" id="stat-tc">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">已施作項目</div>
@@ -973,45 +930,45 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <div id="dt-basic">
       <div class="form-group">
         <label class="form-label">姓名</label>
-        <input class="form-input" value="小美">
+        <input class="form-input" id="ed-name" placeholder="姓名">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div class="form-group">
           <label class="form-label">性別</label>
-          <select class="form-input"><option>女</option><option>男</option><option>其他</option></select>
+          <select class="form-input" id="ed-gender"><option>女</option><option>男</option><option>其他</option></select>
         </div>
         <div class="form-group">
           <label class="form-label">年紀</label>
-          <input class="form-input" type="number" value="28">
+          <input class="form-input" id="ed-age" type="number" placeholder="25">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">電話</label>
-        <input class="form-input" type="tel" value="0912-345-678">
+        <input class="form-input" id="ed-phone" type="tel" placeholder="09xx-xxx-xxx">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div class="form-group">
           <label class="form-label">施作地點</label>
-          <select class="form-input"><option>台中</option><option>台北</option></select>
+          <select class="form-input" id="ed-location"><option>台中</option><option>台北</option></select>
         </div>
         <div class="form-group">
           <label class="form-label">來源</label>
-          <select class="form-input"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select>
+          <select class="form-input" id="ed-source"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select>
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">人物備註</label>
-        <textarea class="form-input" rows="2" placeholder="特別注意事項…">很準時，喜歡聊天，貓咪過敏不可使用動物蛋白</textarea>
+        <textarea class="form-input" id="ed-note" rows="2" placeholder="特別注意事項…"></textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label">已施作項目</label>
-        <div class="service-grid mt4">
-          <div class="service-item selected"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
-          <div class="service-item selected"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
-          <div class="service-item"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
-          <div class="service-item"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
-          <div class="service-item" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
+        <div class="service-grid mt4" id="ed-services">
+          <div class="service-item" data-svc="睫毛"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
+          <div class="service-item" data-svc="眉毛"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
+          <div class="service-item" data-svc="霧唇"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
+          <div class="service-item" data-svc="髮際線"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
+          <div class="service-item" data-svc="除色" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
         </div>
       </div>
 
@@ -1027,7 +984,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
           <button class="btn btn-secondary btn-sm" onclick="addTag()">＋ 新增</button>
         </div>
       </div>
-      <button class="btn btn-primary btn-full">儲存資料</button>
+      <button class="btn btn-primary btn-full" onclick="saveClientEdits()">儲存資料</button>
     </div>
 
     <!-- 施作紀錄 -->
@@ -1185,20 +1142,21 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">新增客戶</div>
-    <div class="form-group"><label class="form-label">姓名</label><input class="form-input" placeholder="客戶姓名"></div>
+    <div class="form-group"><label class="form-label">姓名 *</label><input class="form-input" id="nc-name" placeholder="客戶姓名"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="form-group"><label class="form-label">性別</label><select class="form-input"><option>女</option><option>男</option><option>其他</option></select></div>
-      <div class="form-group"><label class="form-label">年紀</label><input class="form-input" type="number" placeholder="25"></div>
+      <div class="form-group"><label class="form-label">性別</label><select class="form-input" id="nc-gender"><option>女</option><option>男</option><option>其他</option></select></div>
+      <div class="form-group"><label class="form-label">年紀</label><input class="form-input" id="nc-age" type="number" placeholder="25"></div>
     </div>
-    <div class="form-group"><label class="form-label">電話</label><input class="form-input" type="tel" placeholder="09xx-xxx-xxx"></div>
+    <div class="form-group"><label class="form-label">電話</label><input class="form-input" id="nc-phone" type="tel" placeholder="09xx-xxx-xxx"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="form-group"><label class="form-label">施作地點</label><select class="form-input"><option>台中</option><option>台北</option></select></div>
-      <div class="form-group"><label class="form-label">來源</label><select class="form-input"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select></div>
+      <div class="form-group"><label class="form-label">施作地點</label><select class="form-input" id="nc-location"><option>台中</option><option>台北</option></select></div>
+      <div class="form-group"><label class="form-label">來源</label><select class="form-input" id="nc-source"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select></div>
     </div>
-    <div class="form-group"><label class="form-label">人物備註</label><textarea class="form-input" rows="2" placeholder="特別注意事項…"></textarea></div>
+    <div class="form-group"><label class="form-label">人物備註</label><textarea class="form-input" id="nc-note" rows="2" placeholder="特別注意事項…"></textarea></div>
+    <div id="nc-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none">請填寫客戶姓名</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-client')">取消</button>
-      <button class="btn btn-primary" style="flex:2">建立客戶</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveNewClient()">建立客戶</button>
     </div>
   </div>
 </div>
@@ -1264,38 +1222,213 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
      JAVASCRIPT
 ══════════════════════════════════════ -->
 <script>
-// ── Tab switching ──
-function switchTab(name, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  btn.classList.add('active');
-  document.querySelector('.page-content').scrollTop = 0;
+// ══════════════════════════
+// DATA STORE (localStorage)
+// ══════════════════════════
+const STORE_KEY = 'beauty_crm_clients';
+
+// 預設示範客戶
+const defaultClients = [
+  { id: 'c1', name: '小美', gender: '女', age: 28, phone: '0912-345-678', location: '台中', source: '客戶介紹', note: '很準時，喜歡聊天，貓咪過敏不可使用動物蛋白', tags: ['💡 開燈','⏱ 趕時間'], services: ['睫毛','眉毛'] },
+  { id: 'c2', name: '佳琪', gender: '女', age: 32, phone: '0923-456-789', location: '台北', source: 'KOL分享',   note: '需要較多溝通時間', tags: ['🤫 不貼膠帶','😊 愛聊天'], services: ['霧唇'] },
+  { id: 'c3', name: '雅雯', gender: '女', age: 25, phone: '0934-567-890', location: '台中', source: 'Google',    note: '第一次做，需要耐心說明', tags: ['🌸 怕痛'], services: ['髮際線','睫毛'] },
+];
+
+function loadClients() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    return raw ? JSON.parse(raw) : defaultClients;
+  } catch(e) { return defaultClients; }
 }
 
-// ── Open client detail ──
+function saveClients(clients) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(clients)); } catch(e) {}
+}
+
+let clients = loadClients();
+let currentClientId = null;
+
+// ══════════════════════════
+// SERVICE CONFIG
+// ══════════════════════════
+const serviceMap = {
+  '睫毛':   { icon:'😴', color:'accent' },
+  '眉毛':   { icon:'✏️', color:'purple' },
+  '霧唇':   { icon:'💋', color:'pink'   },
+  '髮際線': { icon:'💜', color:'blue'   },
+  '除色':   { icon:'🗑', color:'amber'  },
+};
+const tagColors = ['green','amber','red','blue','purple','pink'];
+
+// ══════════════════════════
+// RENDER CLIENT LIST
+// ══════════════════════════
+function renderClientList(filter = '') {
+  const listEl = document.getElementById('client-list');
+  const countEl = document.getElementById('client-count');
+  const totalEl = document.getElementById('stat-total');
+  const tcEl = document.getElementById('stat-tc');
+  const tpEl = document.getElementById('stat-tp');
+
+  let filtered = clients;
+  if (filter && filter !== '全部') {
+    filtered = clients.filter(c => c.services && c.services.includes(filter));
+  }
+
+  countEl.textContent = '共 ' + filtered.length + ' 位';
+  totalEl.textContent = clients.length;
+
+  const tc = clients.filter(c => c.location === '台中').length;
+  const tp = clients.filter(c => c.location === '台北').length;
+  tcEl.textContent = '台中 ' + tc + '・台北 ' + tp;
+
+  if (filtered.length === 0) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><p>尚無客戶資料</p></div>`;
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(c => {
+    const initials = c.name.charAt(0);
+    const loc = c.location === '台中'
+      ? `<span class="loc-badge loc-tc">台中</span>`
+      : `<span class="loc-badge loc-tp">台北</span>`;
+    const svcText = (c.services || []).map(s => (serviceMap[s]||{}).icon + ' ' + s).join('・') || '未設定';
+    const tagsHtml = (c.tags || []).slice(0,3).map((t,i) => {
+      const col = tagColors[i % tagColors.length];
+      return `<span class="tag ${col}" style="font-size:11px;padding:3px 8px">${t}</span>`;
+    }).join('');
+    return `<div class="list-item" onclick="openClientDetail('${c.id}')">
+      <div class="avatar">${initials}</div>
+      <div class="li-info">
+        <div class="flex-between">
+          <span class="li-name">${c.name}</span>${loc}
+        </div>
+        <div class="li-sub">${svcText} ｜ ${c.phone || '未填電話'}</div>
+        ${tagsHtml ? `<div class="tag-row mt4">${tagsHtml}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════
+// OPEN CLIENT DETAIL
+// ══════════════════════════
 function openClientDetail(id) {
+  currentClientId = id;
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+
+  // 填入基本資料
+  document.getElementById('ed-name').value     = c.name || '';
+  document.getElementById('ed-gender').value   = c.gender || '女';
+  document.getElementById('ed-age').value      = c.age || '';
+  document.getElementById('ed-phone').value    = c.phone || '';
+  document.getElementById('ed-location').value = c.location || '台中';
+  document.getElementById('ed-source').value   = c.source || '客戶介紹';
+  document.getElementById('ed-note').value     = c.note || '';
+
+  // 施作項目
+  document.querySelectorAll('#ed-services .service-item').forEach(item => {
+    const sname = item.dataset.svc;
+    item.classList.toggle('selected', (c.services||[]).includes(sname));
+  });
+
+  // 標籤
+  const tagContainer = document.getElementById('tag-container');
+  tagContainer.innerHTML = (c.tags||[]).map((t,i) => {
+    const col = tagColors[i % tagColors.length];
+    return `<span class="tag ${col}">${t} <span class="del" onclick="removeTag(this)">×</span></span>`;
+  }).join('');
+
+  // 重設到基本資料 tab
+  switchDetailTab(
+    document.querySelector('#modal-client-detail .pill-tabs .pill-tab'),
+    'dt-basic'
+  );
   openModal('modal-client-detail');
 }
 
-// ── Detail tab switching ──
-function switchDetailTab(btn, id) {
-  document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el => el.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
-  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ══════════════════════════
+// SAVE CLIENT EDITS
+// ══════════════════════════
+function saveClientEdits() {
+  const c = clients.find(x => x.id === currentClientId);
+  if (!c) return;
+
+  c.name     = document.getElementById('ed-name').value.trim();
+  c.gender   = document.getElementById('ed-gender').value;
+  c.age      = document.getElementById('ed-age').value;
+  c.phone    = document.getElementById('ed-phone').value.trim();
+  c.location = document.getElementById('ed-location').value;
+  c.source   = document.getElementById('ed-source').value;
+  c.note     = document.getElementById('ed-note').value.trim();
+
+  // 施作項目
+  c.services = [];
+  document.querySelectorAll('#ed-services .service-item.selected').forEach(el => {
+    c.services.push(el.dataset.svc);
+  });
+
+  // 標籤
+  c.tags = [];
+  document.querySelectorAll('#tag-container .tag').forEach(el => {
+    const txt = el.childNodes[0].textContent.trim();
+    if (txt) c.tags.push(txt);
+  });
+
+  saveClients(clients);
+  renderClientList(currentFilter);
+  closeModal('modal-client-detail');
+  showToast('✅ 已儲存客戶資料');
 }
 
-// ── Cost tab switching ──
-function switchCostTab(btn, id) {
-  document.querySelectorAll('.cost-section').forEach(s => s.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
-  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ══════════════════════════
+// ADD NEW CLIENT
+// ══════════════════════════
+function saveNewClient() {
+  const name = document.getElementById('nc-name').value.trim();
+  const errEl = document.getElementById('nc-error');
+  if (!name) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  const newClient = {
+    id:       'c' + Date.now(),
+    name,
+    gender:   document.getElementById('nc-gender').value,
+    age:      document.getElementById('nc-age').value,
+    phone:    document.getElementById('nc-phone').value.trim(),
+    location: document.getElementById('nc-location').value,
+    source:   document.getElementById('nc-source').value,
+    note:     document.getElementById('nc-note').value.trim(),
+    tags:     [],
+    services: [],
+  };
+
+  clients.unshift(newClient);
+  saveClients(clients);
+  renderClientList(currentFilter);
+
+  // 清空表單
+  ['nc-name','nc-age','nc-phone','nc-note'].forEach(id => document.getElementById(id).value = '');
+
+  closeModal('modal-add-client');
+  showToast('✅ 已新增客戶：' + name);
 }
 
-// ── Tag management ──
-const tagColors = ['green','amber','red','blue','purple','pink'];
+// ══════════════════════════
+// FILTER
+// ══════════════════════════
+let currentFilter = '全部';
+function setFilter(btn, label) {
+  currentFilter = label;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderClientList(label);
+}
+
+// ══════════════════════════
+// TAG MANAGEMENT
+// ══════════════════════════
 let tagColorIdx = 0;
 function addTag() {
   const input = document.getElementById('new-tag-input');
@@ -1314,35 +1447,112 @@ document.addEventListener('keydown', e => {
 });
 function removeTag(el) { el.parentElement.remove(); }
 
-// ── Service item toggle ──
+// ══════════════════════════
+// TAB SWITCHING
+// ══════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelector('.page-content').scrollTop = 0;
+  if (name === 'stats') setTimeout(animateBars, 150);
+}
+
+function switchDetailTab(btn, id) {
+  document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function switchCostTab(btn, id) {
+  document.querySelectorAll('.cost-section').forEach(s => s.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════
+// SERVICE ITEM TOGGLE
+// ══════════════════════════
 document.querySelectorAll('.service-item').forEach(item => {
   item.addEventListener('click', () => item.classList.toggle('selected'));
 });
 
-// ── Modal ──
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
+// ══════════════════════════
+// MODAL
+// ══════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function closeModalOutside(e, id) {
   if (e.target.classList.contains('modal-overlay')) closeModal(id);
 }
 
-// ── Animate bars on stats page ──
+// ══════════════════════════
+// TOAST
+// ══════════════════════════
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c2820;color:#faf7f2;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.3s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+}
+
+// ══════════════════════════
+// BAR CHART ANIMATION
+// ══════════════════════════
 function animateBars() {
   document.querySelectorAll('.bar-fill').forEach(bar => {
     const w = bar.style.width;
     bar.style.width = '0';
-    setTimeout(() => { bar.style.width = w; }, 100);
+    setTimeout(() => { bar.style.width = w; }, 80);
   });
 }
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    setTimeout(animateBars, 100);
-  });
+
+// ══════════════════════════
+// SEARCH
+// ══════════════════════════
+document.getElementById('client-search').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) { renderClientList(currentFilter); return; }
+  const filtered = clients.filter(c =>
+    c.name.includes(q) || (c.phone||'').includes(q)
+  );
+  const listEl = document.getElementById('client-list');
+  document.getElementById('client-count').textContent = '共 ' + filtered.length + ' 位';
+  if (filtered.length === 0) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>找不到「${q}」</p></div>`;
+    return;
+  }
+  listEl.innerHTML = filtered.map(c => {
+    const initials = c.name.charAt(0);
+    const loc = c.location === '台中'
+      ? `<span class="loc-badge loc-tc">台中</span>`
+      : `<span class="loc-badge loc-tp">台北</span>`;
+    const svcText = (c.services||[]).map(s=>(serviceMap[s]||{}).icon+' '+s).join('・')||'未設定';
+    return `<div class="list-item" onclick="openClientDetail('${c.id}')">
+      <div class="avatar">${initials}</div>
+      <div class="li-info">
+        <div class="flex-between"><span class="li-name">${c.name}</span>${loc}</div>
+        <div class="li-sub">${svcText} ｜ ${c.phone||'未填電話'}</div>
+      </div>
+    </div>`;
+  }).join('');
 });
+
+// ══════════════════════════
+// INIT
+// ══════════════════════════
+renderClientList();
+setTimeout(animateBars, 300);
 </script>
 
 </body>
