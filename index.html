@@ -931,6 +931,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <div class="form-group">
         <label class="form-label">姓名</label>
         <input class="form-input" id="ed-name" placeholder="姓名">
+        <div id="ed-name-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none">⚠ 姓名不可空白</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div class="form-group">
@@ -1099,40 +1100,43 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <div class="modal-handle"></div>
     <div class="modal-title">新增施作紀錄</div>
     <div class="form-group">
-      <label class="form-label">施作項目</label>
-      <div class="service-grid">
-        <div class="service-item selected"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
-        <div class="service-item"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
-        <div class="service-item"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
-        <div class="service-item"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
-        <div class="service-item" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
+      <label class="form-label">施作項目 *</label>
+      <div class="service-grid" id="rec-service-grid">
+        <div class="service-item" data-svc="睫毛"><div class="si-icon">😴</div><div class="si-name">睫毛</div></div>
+        <div class="service-item" data-svc="眉毛"><div class="si-icon">✏️</div><div class="si-name">眉毛</div></div>
+        <div class="service-item" data-svc="霧唇"><div class="si-icon">💋</div><div class="si-name">霧唇</div></div>
+        <div class="service-item" data-svc="髮際線"><div class="si-icon">💜</div><div class="si-name">髮際線</div></div>
+        <div class="service-item" data-svc="除色" style="grid-column:span 2"><div class="si-icon">🗑</div><div class="si-name">除色</div></div>
       </div>
+      <div id="rec-svc-err" style="color:var(--red);font-size:12px;margin-top:6px;display:none">請選擇施作項目</div>
     </div>
     <div class="form-group">
-      <label class="form-label">施作日期</label>
-      <input class="form-input" type="date">
+      <label class="form-label">施作日期 *</label>
+      <input class="form-input" id="rec-date" type="date">
+      <div id="rec-date-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none">請選擇日期</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-group">
         <label class="form-label">針具規格</label>
-        <input class="form-input" placeholder="12mm 0.10J">
+        <input class="form-input" id="rec-needle" placeholder="12mm 0.10J">
       </div>
       <div class="form-group">
         <label class="form-label">色號</label>
-        <input class="form-input" placeholder="深棕">
+        <input class="form-input" id="rec-color" placeholder="深棕">
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">消費金額 (NT$)</label>
-      <input class="form-input" type="number" placeholder="3800">
+      <label class="form-label">消費金額 (NT$) *</label>
+      <input class="form-input" id="rec-amount" type="number" placeholder="3800" min="0">
+      <div id="rec-amount-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none">請填寫金額</div>
     </div>
     <div class="form-group">
       <label class="form-label">施作備註</label>
-      <textarea class="form-input" rows="3" placeholder="注意事項・特殊情況…"></textarea>
+      <textarea class="form-input" id="rec-note" rows="3" placeholder="注意事項・特殊情況…"></textarea>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-record')">取消</button>
-      <button class="btn btn-primary" style="flex:2">儲存紀錄</button>
+      <button class="btn btn-primary" style="flex:2" onclick="saveRecord()">儲存紀錄</button>
     </div>
   </div>
 </div>
@@ -1153,7 +1157,8 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <div class="form-group"><label class="form-label">來源</label><select class="form-input" id="nc-source"><option>客戶介紹</option><option>KOL分享</option><option>Google</option><option>Instagram</option><option>其他</option></select></div>
     </div>
     <div class="form-group"><label class="form-label">人物備註</label><textarea class="form-input" id="nc-note" rows="2" placeholder="特別注意事項…"></textarea></div>
-    <div id="nc-error" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none">請填寫客戶姓名</div>
+    <div id="nc-error" style="color:var(--red);font-size:12px;margin-bottom:4px;display:none">⚠ 請填寫客戶姓名</div>
+    <div id="nc-phone-err" style="color:var(--red);font-size:12px;margin-bottom:8px;display:none">⚠ 電話格式錯誤（應為 09xx-xxx-xxx）</div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modal-add-client')">取消</button>
       <button class="btn btn-primary" style="flex:2" onclick="saveNewClient()">建立客戶</button>
@@ -1225,89 +1230,135 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 // ══════════════════════════
 // DATA STORE (localStorage)
 // ══════════════════════════
-const STORE_KEY = 'beauty_crm_clients';
+const STORE_KEY     = 'beauty_crm_clients';
+const RECORDS_KEY   = 'beauty_crm_records';
 
-// 預設示範客戶
 const defaultClients = [
-  { id: 'c1', name: '小美', gender: '女', age: 28, phone: '0912-345-678', location: '台中', source: '客戶介紹', note: '很準時，喜歡聊天，貓咪過敏不可使用動物蛋白', tags: ['💡 開燈','⏱ 趕時間'], services: ['睫毛','眉毛'] },
-  { id: 'c2', name: '佳琪', gender: '女', age: 32, phone: '0923-456-789', location: '台北', source: 'KOL分享',   note: '需要較多溝通時間', tags: ['🤫 不貼膠帶','😊 愛聊天'], services: ['霧唇'] },
-  { id: 'c3', name: '雅雯', gender: '女', age: 25, phone: '0934-567-890', location: '台中', source: 'Google',    note: '第一次做，需要耐心說明', tags: ['🌸 怕痛'], services: ['髮際線','睫毛'] },
+  { id:'c1', name:'小美',  gender:'女', age:28, phone:'0912-345-678', location:'台中', source:'客戶介紹', note:'很準時，喜歡聊天，貓咪過敏不可使用動物蛋白', tags:['💡 開燈','⏱ 趕時間'], services:['睫毛','眉毛'] },
+  { id:'c2', name:'佳琪',  gender:'女', age:32, phone:'0923-456-789', location:'台北', source:'KOL分享',  note:'需要較多溝通時間',   tags:['🤫 不貼膠帶','😊 愛聊天'], services:['霧唇'] },
+  { id:'c3', name:'雅雯',  gender:'女', age:25, phone:'0934-567-890', location:'台中', source:'Google',   note:'第一次做，需要耐心說明', tags:['🌸 怕痛'], services:['髮際線','睫毛'] },
 ];
 
 function loadClients() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? JSON.parse(raw) : defaultClients;
-  } catch(e) { return defaultClients; }
+  try { const r = localStorage.getItem(STORE_KEY); return r ? JSON.parse(r) : defaultClients; }
+  catch(e) { return defaultClients; }
+}
+function saveClients(list) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch(e) {}
 }
 
-function saveClients(clients) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(clients)); } catch(e) {}
+function loadRecords() {
+  try { const r = localStorage.getItem(RECORDS_KEY); return r ? JSON.parse(r) : {}; }
+  catch(e) { return {}; }
+}
+function saveRecordsDB(db) {
+  try { localStorage.setItem(RECORDS_KEY, JSON.stringify(db)); } catch(e) {}
 }
 
-let clients = loadClients();
+let clients       = loadClients();
+let recordsDB     = loadRecords();   // { clientId: [{id,svc,date,needle,color,amount,note},...] }
 let currentClientId = null;
+let currentFilter   = '全部';
 
-// ══════════════════════════
-// SERVICE CONFIG
-// ══════════════════════════
 const serviceMap = {
-  '睫毛':   { icon:'😴', color:'accent' },
-  '眉毛':   { icon:'✏️', color:'purple' },
-  '霧唇':   { icon:'💋', color:'pink'   },
-  '髮際線': { icon:'💜', color:'blue'   },
-  '除色':   { icon:'🗑', color:'amber'  },
+  '睫毛':   { icon:'😴' },
+  '眉毛':   { icon:'✏️' },
+  '霧唇':   { icon:'💋' },
+  '髮際線': { icon:'💜' },
+  '除色':   { icon:'🗑' },
 };
 const tagColors = ['green','amber','red','blue','purple','pink'];
 
 // ══════════════════════════
 // RENDER CLIENT LIST
 // ══════════════════════════
-function renderClientList(filter = '') {
-  const listEl = document.getElementById('client-list');
+function clientRowHtml(c) {
+  const loc = c.location === '台中'
+    ? `<span class="loc-badge loc-tc">台中</span>`
+    : `<span class="loc-badge loc-tp">台北</span>`;
+  const svcText = (c.services||[]).map(s=>(serviceMap[s]||{}).icon+' '+s).join('・')||'未設定';
+  const tagsHtml = (c.tags||[]).slice(0,3).map((t,i)=>{
+    return `<span class="tag ${tagColors[i%tagColors.length]}" style="font-size:11px;padding:3px 8px">${t}</span>`;
+  }).join('');
+  return `<div class="list-item-wrap" style="border-bottom:1px solid var(--border)">
+    <div class="list-item" style="border-bottom:none;padding-bottom:6px" onclick="openClientDetail('${c.id}')">
+      <div class="avatar">${c.name.charAt(0)}</div>
+      <div class="li-info">
+        <div class="flex-between"><span class="li-name">${c.name}</span>${loc}</div>
+        <div class="li-sub">${svcText} ｜ ${c.phone||'未填電話'}</div>
+        ${tagsHtml?`<div class="tag-row mt4">${tagsHtml}</div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 14px 10px;justify-content:flex-end">
+      <button class="btn btn-secondary btn-xs" onclick="event.stopPropagation();openClientDetail('${c.id}')">✏️ 編輯</button>
+      <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();confirmDelete('${c.id}','${c.name}')">🗑 刪除</button>
+    </div>
+  </div>`;
+}
+
+function renderClientList(filter) {
+  if (filter !== undefined) currentFilter = filter;
+  const listEl  = document.getElementById('client-list');
   const countEl = document.getElementById('client-count');
   const totalEl = document.getElementById('stat-total');
-  const tcEl = document.getElementById('stat-tc');
-  const tpEl = document.getElementById('stat-tp');
+  const tcEl    = document.getElementById('stat-tc');
 
-  let filtered = clients;
-  if (filter && filter !== '全部') {
-    filtered = clients.filter(c => c.services && c.services.includes(filter));
-  }
+  let filtered = currentFilter && currentFilter !== '全部'
+    ? clients.filter(c=>(c.services||[]).includes(currentFilter))
+    : clients;
 
   countEl.textContent = '共 ' + filtered.length + ' 位';
   totalEl.textContent = clients.length;
+  const tc = clients.filter(c=>c.location==='台中').length;
+  const tp = clients.filter(c=>c.location==='台北').length;
+  tcEl.textContent = '台中 '+tc+'・台北 '+tp;
 
-  const tc = clients.filter(c => c.location === '台中').length;
-  const tp = clients.filter(c => c.location === '台北').length;
-  tcEl.textContent = '台中 ' + tc + '・台北 ' + tp;
-
-  if (filtered.length === 0) {
+  if (filtered.length===0) {
     listEl.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><p>尚無客戶資料</p></div>`;
     return;
   }
+  listEl.innerHTML = filtered.map(clientRowHtml).join('');
+}
 
-  listEl.innerHTML = filtered.map(c => {
-    const initials = c.name.charAt(0);
-    const loc = c.location === '台中'
-      ? `<span class="loc-badge loc-tc">台中</span>`
-      : `<span class="loc-badge loc-tp">台北</span>`;
-    const svcText = (c.services || []).map(s => (serviceMap[s]||{}).icon + ' ' + s).join('・') || '未設定';
-    const tagsHtml = (c.tags || []).slice(0,3).map((t,i) => {
-      const col = tagColors[i % tagColors.length];
-      return `<span class="tag ${col}" style="font-size:11px;padding:3px 8px">${t}</span>`;
-    }).join('');
-    return `<div class="list-item" onclick="openClientDetail('${c.id}')">
-      <div class="avatar">${initials}</div>
-      <div class="li-info">
-        <div class="flex-between">
-          <span class="li-name">${c.name}</span>${loc}
-        </div>
-        <div class="li-sub">${svcText} ｜ ${c.phone || '未填電話'}</div>
-        ${tagsHtml ? `<div class="tag-row mt4">${tagsHtml}</div>` : ''}
+// ══════════════════════════
+// DELETE CLIENT (防呆確認)
+// ══════════════════════════
+function confirmDelete(id, name) {
+  showConfirm(
+    `確定要刪除「${name}」的所有資料嗎？\n此操作無法復原。`,
+    () => {
+      clients = clients.filter(c => c.id !== id);
+      delete recordsDB[id];
+      saveClients(clients);
+      saveRecordsDB(recordsDB);
+      renderClientList();
+      showToast('🗑 已刪除客戶：' + name);
+    }
+  );
+}
+
+// ══════════════════════════
+// CONFIRM DIALOG
+// ══════════════════════════
+function showConfirm(msg, onConfirm) {
+  let overlay = document.getElementById('confirm-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'confirm-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(30,25,18,0.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px';
+    overlay.innerHTML = `<div style="background:var(--card);border-radius:16px;padding:24px 20px;max-width:320px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+      <div id="confirm-msg" style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:20px;white-space:pre-line"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary" style="flex:1" id="confirm-cancel">取消</button>
+        <button class="btn btn-danger" style="flex:1" id="confirm-ok">確定刪除</button>
       </div>
     </div>`;
-  }).join('');
+    document.body.appendChild(overlay);
+  }
+  document.getElementById('confirm-msg').textContent = msg;
+  overlay.style.display = 'flex';
+  document.getElementById('confirm-cancel').onclick = () => { overlay.style.display = 'none'; };
+  document.getElementById('confirm-ok').onclick = () => { overlay.style.display = 'none'; onConfirm(); };
 }
 
 // ══════════════════════════
@@ -1318,7 +1369,6 @@ function openClientDetail(id) {
   const c = clients.find(x => x.id === id);
   if (!c) return;
 
-  // 填入基本資料
   document.getElementById('ed-name').value     = c.name || '';
   document.getElementById('ed-gender').value   = c.gender || '女';
   document.getElementById('ed-age').value      = c.age || '';
@@ -1327,20 +1377,18 @@ function openClientDetail(id) {
   document.getElementById('ed-source').value   = c.source || '客戶介紹';
   document.getElementById('ed-note').value     = c.note || '';
 
-  // 施作項目
   document.querySelectorAll('#ed-services .service-item').forEach(item => {
-    const sname = item.dataset.svc;
-    item.classList.toggle('selected', (c.services||[]).includes(sname));
+    item.classList.toggle('selected', (c.services||[]).includes(item.dataset.svc));
   });
 
-  // 標籤
   const tagContainer = document.getElementById('tag-container');
   tagContainer.innerHTML = (c.tags||[]).map((t,i) => {
-    const col = tagColors[i % tagColors.length];
-    return `<span class="tag ${col}">${t} <span class="del" onclick="removeTag(this)">×</span></span>`;
+    return `<span class="tag ${tagColors[i%tagColors.length]}">${t} <span class="del" onclick="removeTag(this)">×</span></span>`;
   }).join('');
 
-  // 重設到基本資料 tab
+  // render records tab
+  renderRecords(id);
+
   switchDetailTab(
     document.querySelector('#modal-client-detail .pill-tabs .pill-tab'),
     'dt-basic'
@@ -1349,81 +1397,169 @@ function openClientDetail(id) {
 }
 
 // ══════════════════════════
-// SAVE CLIENT EDITS
+// SAVE CLIENT EDITS (防呆)
 // ══════════════════════════
 function saveClientEdits() {
+  const nameVal = document.getElementById('ed-name').value.trim();
+  const nameErr = document.getElementById('ed-name-err');
+  if (!nameVal) {
+    nameErr.style.display = 'block';
+    document.getElementById('ed-name').focus();
+    return;
+  }
+  nameErr.style.display = 'none';
+
   const c = clients.find(x => x.id === currentClientId);
   if (!c) return;
 
-  c.name     = document.getElementById('ed-name').value.trim();
+  c.name     = nameVal;
   c.gender   = document.getElementById('ed-gender').value;
   c.age      = document.getElementById('ed-age').value;
   c.phone    = document.getElementById('ed-phone').value.trim();
   c.location = document.getElementById('ed-location').value;
   c.source   = document.getElementById('ed-source').value;
   c.note     = document.getElementById('ed-note').value.trim();
-
-  // 施作項目
-  c.services = [];
-  document.querySelectorAll('#ed-services .service-item.selected').forEach(el => {
-    c.services.push(el.dataset.svc);
-  });
-
-  // 標籤
-  c.tags = [];
-  document.querySelectorAll('#tag-container .tag').forEach(el => {
-    const txt = el.childNodes[0].textContent.trim();
-    if (txt) c.tags.push(txt);
-  });
+  c.services = [...document.querySelectorAll('#ed-services .service-item.selected')].map(el=>el.dataset.svc);
+  c.tags     = [...document.querySelectorAll('#tag-container .tag')].map(el=>el.childNodes[0].textContent.trim()).filter(Boolean);
 
   saveClients(clients);
-  renderClientList(currentFilter);
+  renderClientList();
   closeModal('modal-client-detail');
-  showToast('✅ 已儲存客戶資料');
+  showToast('✅ 已儲存：' + c.name);
 }
 
 // ══════════════════════════
-// ADD NEW CLIENT
+// ADD NEW CLIENT (防呆)
 // ══════════════════════════
 function saveNewClient() {
-  const name = document.getElementById('nc-name').value.trim();
+  const name  = document.getElementById('nc-name').value.trim();
+  const phone = document.getElementById('nc-phone').value.trim();
   const errEl = document.getElementById('nc-error');
-  if (!name) { errEl.style.display = 'block'; return; }
-  errEl.style.display = 'none';
+  const phErr = document.getElementById('nc-phone-err');
+
+  let valid = true;
+  if (!name)  { errEl.style.display = 'block'; valid = false; } else errEl.style.display = 'none';
+  if (phone && !/^09\d{2}[- ]?\d{3}[- ]?\d{3}$/.test(phone.replace(/\s/g,''))) {
+    phErr.style.display = 'block'; valid = false;
+  } else phErr.style.display = 'none';
+  if (!valid) return;
 
   const newClient = {
     id:       'c' + Date.now(),
     name,
     gender:   document.getElementById('nc-gender').value,
     age:      document.getElementById('nc-age').value,
-    phone:    document.getElementById('nc-phone').value.trim(),
+    phone,
     location: document.getElementById('nc-location').value,
     source:   document.getElementById('nc-source').value,
     note:     document.getElementById('nc-note').value.trim(),
-    tags:     [],
-    services: [],
+    tags:[], services:[],
   };
 
   clients.unshift(newClient);
   saveClients(clients);
-  renderClientList(currentFilter);
-
-  // 清空表單
-  ['nc-name','nc-age','nc-phone','nc-note'].forEach(id => document.getElementById(id).value = '');
-
+  renderClientList();
+  ['nc-name','nc-age','nc-phone','nc-note'].forEach(id=>document.getElementById(id).value='');
   closeModal('modal-add-client');
-  showToast('✅ 已新增客戶：' + name);
+  showToast('✅ 已新增：' + name);
+}
+
+// ══════════════════════════
+// RECORDS (施作紀錄)
+// ══════════════════════════
+function renderRecords(clientId) {
+  const recs = (recordsDB[clientId]||[]).slice().reverse();
+  const container = document.getElementById('dt-record');
+  const addBtn = `<button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openModal('modal-add-record')">＋ 新增施作紀錄</button>`;
+
+  if (recs.length === 0) {
+    container.innerHTML = `
+      <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
+        <button class="pill-tab active">全部</button>
+        <button class="pill-tab">😴 睫毛</button><button class="pill-tab">✏️ 眉毛</button>
+        <button class="pill-tab">💋 霧唇</button><button class="pill-tab">💜 髮際線</button><button class="pill-tab">🗑 除色</button>
+      </div>
+      <div class="empty"><div class="empty-icon">📋</div><p>尚無施作紀錄</p></div>
+      ${addBtn}`;
+    return;
+  }
+
+  const tlHtml = recs.map(r => `
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="flex-between">
+          <div class="tl-date">${r.date}</div>
+          <span class="amount-pill">NT$ ${Number(r.amount||0).toLocaleString()}</span>
+        </div>
+        <div class="tl-text fw6">${(serviceMap[r.svc]||{}).icon||''} ${r.svc}</div>
+        <div class="tl-detail">針具：${r.needle||'—'} ｜ 色號：${r.color||'—'}<br>${r.note||''}</div>
+      </div>
+    </div>`).join('');
+
+  container.innerHTML = `
+    <div class="pill-tabs" style="padding:0 0 10px;margin:0 -4px">
+      <button class="pill-tab active">全部</button>
+    </div>
+    <div class="timeline">${tlHtml}</div>
+    ${addBtn}`;
+}
+
+function saveRecord() {
+  // 防呆驗證
+  const selectedSvc = document.querySelector('#rec-service-grid .service-item.selected');
+  const date   = document.getElementById('rec-date').value;
+  const amount = document.getElementById('rec-amount').value;
+
+  let valid = true;
+  const svcErr    = document.getElementById('rec-svc-err');
+  const dateErr   = document.getElementById('rec-date-err');
+  const amountErr = document.getElementById('rec-amount-err');
+
+  if (!selectedSvc)        { svcErr.style.display='block';    valid=false; } else svcErr.style.display='none';
+  if (!date)               { dateErr.style.display='block';   valid=false; } else dateErr.style.display='none';
+  if (!amount || amount<0) { amountErr.style.display='block'; valid=false; } else amountErr.style.display='none';
+  if (!valid) return;
+
+  const rec = {
+    id:     'r' + Date.now(),
+    svc:    selectedSvc.dataset.svc,
+    date,
+    needle: document.getElementById('rec-needle').value.trim(),
+    color:  document.getElementById('rec-color').value.trim(),
+    amount: Number(amount),
+    note:   document.getElementById('rec-note').value.trim(),
+  };
+
+  if (!recordsDB[currentClientId]) recordsDB[currentClientId] = [];
+  recordsDB[currentClientId].push(rec);
+  saveRecordsDB(recordsDB);
+
+  // 自動更新客戶已施作項目
+  const c = clients.find(x=>x.id===currentClientId);
+  if (c && !(c.services||[]).includes(rec.svc)) {
+    c.services = [...(c.services||[]), rec.svc];
+    saveClients(clients);
+    renderClientList();
+  }
+
+  // 清空 modal
+  document.querySelectorAll('#rec-service-grid .service-item').forEach(el=>el.classList.remove('selected'));
+  ['rec-date','rec-needle','rec-color','rec-amount','rec-note'].forEach(id=>document.getElementById(id).value='');
+
+  renderRecords(currentClientId);
+  closeModal('modal-add-record');
+  showToast('✅ 已儲存施作紀錄');
 }
 
 // ══════════════════════════
 // FILTER
 // ══════════════════════════
-let currentFilter = '全部';
 function setFilter(btn, label) {
   currentFilter = label;
-  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderClientList(label);
+  renderClientList();
 }
 
 // ══════════════════════════
@@ -1432,53 +1568,53 @@ function setFilter(btn, label) {
 let tagColorIdx = 0;
 function addTag() {
   const input = document.getElementById('new-tag-input');
-  const val = input.value.trim();
+  const val   = input.value.trim();
   if (!val) return;
-  const color = tagColors[tagColorIdx % tagColors.length];
-  tagColorIdx++;
-  const tag = document.createElement('span');
+  const color = tagColors[tagColorIdx++ % tagColors.length];
+  const tag   = document.createElement('span');
   tag.className = `tag ${color}`;
   tag.innerHTML = `${val} <span class="del" onclick="removeTag(this)">×</span>`;
   document.getElementById('tag-container').appendChild(tag);
   input.value = '';
 }
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement.id === 'new-tag-input') addTag();
+  if (e.key==='Enter' && document.activeElement.id==='new-tag-input') addTag();
 });
 function removeTag(el) { el.parentElement.remove(); }
+
+// ══════════════════════════
+// SERVICE ITEM TOGGLE
+// ══════════════════════════
+document.addEventListener('click', e => {
+  const item = e.target.closest('.service-item');
+  if (item) item.classList.toggle('selected');
+});
 
 // ══════════════════════════
 // TAB SWITCHING
 // ══════════════════════════
 function switchTab(name, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
   btn.classList.add('active');
   document.querySelector('.page-content').scrollTop = 0;
-  if (name === 'stats') setTimeout(animateBars, 150);
+  if (name==='stats') setTimeout(animateBars, 150);
 }
 
 function switchDetailTab(btn, id) {
-  document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('#modal-client-detail [id^="dt-"]').forEach(el=>el.style.display='none');
   document.getElementById(id).style.display = 'block';
-  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
 
 function switchCostTab(btn, id) {
-  document.querySelectorAll('.cost-section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.cost-section').forEach(s=>s.style.display='none');
   document.getElementById(id).style.display = 'block';
-  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+  btn.closest('.pill-tabs').querySelectorAll('.pill-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-
-// ══════════════════════════
-// SERVICE ITEM TOGGLE
-// ══════════════════════════
-document.querySelectorAll('.service-item').forEach(item => {
-  item.addEventListener('click', () => item.classList.toggle('selected'));
-});
 
 // ══════════════════════════
 // MODAL
@@ -1497,23 +1633,23 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'toast';
-    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c2820;color:#faf7f2;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.3s';
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2c2820;color:#faf7f2;padding:10px 20px;border-radius:20px;font-size:13px;z-index:300;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.3s;pointer-events:none';
     document.body.appendChild(t);
   }
   t.textContent = msg;
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 2500);
 }
 
 // ══════════════════════════
 // BAR CHART ANIMATION
 // ══════════════════════════
 function animateBars() {
-  document.querySelectorAll('.bar-fill').forEach(bar => {
+  document.querySelectorAll('.bar-fill').forEach(bar=>{
     const w = bar.style.width;
     bar.style.width = '0';
-    setTimeout(() => { bar.style.width = w; }, 80);
+    setTimeout(()=>{ bar.style.width=w; }, 80);
   });
 }
 
@@ -1522,30 +1658,13 @@ function animateBars() {
 // ══════════════════════════
 document.getElementById('client-search').addEventListener('input', function() {
   const q = this.value.trim().toLowerCase();
-  if (!q) { renderClientList(currentFilter); return; }
-  const filtered = clients.filter(c =>
-    c.name.includes(q) || (c.phone||'').includes(q)
-  );
+  if (!q) { renderClientList(); return; }
   const listEl = document.getElementById('client-list');
-  document.getElementById('client-count').textContent = '共 ' + filtered.length + ' 位';
-  if (filtered.length === 0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>找不到「${q}」</p></div>`;
-    return;
-  }
-  listEl.innerHTML = filtered.map(c => {
-    const initials = c.name.charAt(0);
-    const loc = c.location === '台中'
-      ? `<span class="loc-badge loc-tc">台中</span>`
-      : `<span class="loc-badge loc-tp">台北</span>`;
-    const svcText = (c.services||[]).map(s=>(serviceMap[s]||{}).icon+' '+s).join('・')||'未設定';
-    return `<div class="list-item" onclick="openClientDetail('${c.id}')">
-      <div class="avatar">${initials}</div>
-      <div class="li-info">
-        <div class="flex-between"><span class="li-name">${c.name}</span>${loc}</div>
-        <div class="li-sub">${svcText} ｜ ${c.phone||'未填電話'}</div>
-      </div>
-    </div>`;
-  }).join('');
+  const found  = clients.filter(c=>c.name.includes(q)||(c.phone||'').includes(q));
+  document.getElementById('client-count').textContent = '共 '+found.length+' 位';
+  listEl.innerHTML = found.length===0
+    ? `<div class="empty"><div class="empty-icon">🔍</div><p>找不到「${q}」</p></div>`
+    : found.map(clientRowHtml).join('');
 });
 
 // ══════════════════════════
